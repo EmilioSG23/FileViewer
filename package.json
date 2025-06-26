@@ -1,0 +1,13 @@
+{
+	"name": "fileviewer",
+	"version": "1.0.0",
+	"description": "File Viewer",
+	"scripts": {
+		"start": "mvnw.cmd javafx:run",
+		"build": "mvnw.cmd clean package",
+		"test": "mvnw.cmd test"
+	},
+	"engines": {
+		"node": ">=18.0.0"
+	}
+}
