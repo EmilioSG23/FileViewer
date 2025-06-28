@@ -1,0 +1,82 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+#btnAyuda {
+	-fx-background-size: 100% 100%;
+	-fx-background-color: rgb(35, 195, 255);
+	-fx-background-image: url("imagenes/ayuda.png");
+	-fx-background-radius: 9999px;
+	-fx-cursor: pointer;
+}
+#btnAyuda:hover {
+	-fx-background-color: rgb(85, 208, 253);
+	-fx-background-image: url("imagenes/ayuda_selected.png");
+	-fx-border-radius: 9999px;
+	-fx-border-color: white;
+	-fx-border-width: 2px;
+}
+
+#btnWrong {
+	-fx-background-size: 100% 100%;
+	-fx-background-color: rgb(255, 95, 95);
+}
+#btnRight {
+	-fx-background-size: 100% 100%;
+	-fx-background-color: rgb(160, 255, 120);
+}
+#btnReiniciar {
+	-fx-background-size: 100% 100%;
+	-fx-background-color: rgb(150, 150, 150);
+	-fx-background-image: url("imagenes/reiniciar.png");
+}
+
+#background {
+	-fx-background-color: rgb(50, 50, 50);
+	-fx-display: flex;
+	-fx-flex-direction: column;
+}
+
+#viewerBackground {
+	-fx-background-size: 100% 100%;
+	-fx-background-color: rgb(200, 200, 200);
+	-fx-pref-height: 192px;
+	-fx-min-height: 192px;
+	-fx-max-height: 192px;
+	-fx-pref-width: 100%;
+}
+
+#directoryImg {
+	-fx-background-size: 100% 100%;
+	-fx-background-image: url("imagenes/carpeta.png");
+}
+#panelBackground {
+	-fx-background-size: 100% 100%;
+	-fx-background-color: white;
+	-fx-pref-width: 100%;
+}
+
+.mainFxmlClass {
+}
+
+/* PRESENTATION NODE */
+.title-box {
+	-fx-background-color: rgb(100, 100, 100);
+	-fx-border-style: solid inside;
+	-fx-border-color: black;
+	-fx-alignment: center;
+	-fx-pref-height: 12; /* Opcional si no lo haces en código */
+}
+
+.title-label {
+	-fx-text-fill: white;
+	-fx-font-family: "Consolas";
+	-fx-font-weight: bold;
+	-fx-font-size: 10;
+}
+
+.tree-node {
+	-fx-border-style: solid inside;
+	-fx-border-width: 1px;
+	-fx-border-color: gray;
+}
