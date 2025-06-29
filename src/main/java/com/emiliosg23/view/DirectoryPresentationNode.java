@@ -2,6 +2,7 @@ package com.emiliosg23.view;
 
 import com.emiliosg23.models.infos.DirectoryInfo;
 import com.emiliosg23.utils.AppUtils;
+import com.emiliosg23.utils.FileExtensionUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
@@ -11,9 +12,13 @@ import javafx.scene.layout.VBox;
 public class DirectoryPresentationNode extends PresentationNode{
 	private VBox title;
 	private Pane childTreePane;
+	private final boolean showTitle;
+	private final boolean lastLevel;
 
-	public DirectoryPresentationNode(DirectoryInfo info){
+	public DirectoryPresentationNode(DirectoryInfo info, boolean showTitle, boolean lastLevel){
 		super(info);
+		this.showTitle = showTitle;
+		this.lastLevel = lastLevel;
 	}
 
 	public VBox getTitle() {return title;}
@@ -36,8 +41,20 @@ public class DirectoryPresentationNode extends PresentationNode{
 
 		rootPane.setAlignment(Pos.CENTER);
 
+		if (lastLevel){
+			if (rootPane.getPrefWidth() > 10 && rootPane.getPrefHeight() > 10){
+				Label filenameLabel = new Label(getInfo().getName());
+				filenameLabel.getStyleClass().add("title-file");
+				rootPane.getChildren().add(filenameLabel);
+			}
+			rootPane.setStyle("-fx-background-color:"+FileExtensionUtils.getColor("")+";");
+			
+			setTreePane(rootPane);
+			return rootPane;
+		}
+
 		//Insert directory title
-		if(rootPane.getPrefWidth() > MIN_SIZE){
+		if(showTitle && rootPane.getPrefWidth() > MIN_SIZE){
 			createTitle();
 			rootPane.getChildren().add(title);
 		}
