@@ -5,6 +5,7 @@ import java.net.URL;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.layout.Pane;
 
 public class AppUtils {
 	private static final String GREEN="rgb(160,255,120)";
@@ -41,22 +42,28 @@ public class AppUtils {
 		else
 			changeButtonToWrong(button);
 	}
-
-	private static String buttonStyle(String color, String image) {
-		URL imageUrl = AppUtils.class.getResource("/imagenes/" + image + ".png");
-		return "-fx-background-color:" + color + ";" +
-					"-fx-background-image: url('" + imageUrl + "');" +
-					"-fx-background-size: cover;"; // mejora visual opcional
-	}
-
-	private static String bottonStyle(String color){
-			return "-fx-background-color:"+color;
-	}
 	
 	private static void changeButtonToWrong(Button b){
-		b.setStyle(bottonStyle(RED));
+		b.getStyleClass().remove("right-state");
+		b.getStyleClass().add("wrong-state");
 	}
 	private static void changeButtonToRight(Button b){
-		b.setStyle(bottonStyle(GREEN));
+		b.getStyleClass().remove("wrong-state");
+		b.getStyleClass().add("right-state");
+	}
+
+	public static void setSize(Pane pane, double width, double height){
+		AppUtils.setWidth(pane, width);
+		AppUtils.setHeight(pane, height);
+	}
+	public static void setWidth(Pane pane, double width){
+		pane.setPrefWidth(width);
+		pane.setMinWidth(width);
+		pane.setMaxWidth(width);
+	}
+	public static void setHeight(Pane pane, double height){
+		pane.setPrefHeight(height);
+		pane.setMinHeight(height);
+		pane.setMaxHeight(height);
 	}
 }

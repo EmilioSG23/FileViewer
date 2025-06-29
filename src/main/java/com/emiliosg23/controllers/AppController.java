@@ -1,12 +1,17 @@
 package com.emiliosg23.controllers;
 
+import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 
 import com.emiliosg23.models.AppService;
+import com.emiliosg23.models.RenderConfiguration;
 import com.emiliosg23.models.enums.Modes;
+import com.emiliosg23.models.infos.Info;
 import com.emiliosg23.models.tdas.trees.MultiTree;
 import com.emiliosg23.utils.AppUtils;
+import com.emiliosg23.view.PresentationNode;
+import com.emiliosg23.view.TreeRender;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -23,11 +28,13 @@ public class AppController{
 	@FXML
 	private Button resetButton;
 	@FXML
-	private VBox backgroundBox;
+	private VBox background;
 	@FXML
 	private HBox treeMapPanel;
 	@FXML
 	private Button showFileOrExtensionButton;
+	@FXML
+	private Button acumulativeButton;
 	@FXML
 	private Button executableButton;
 	@FXML
@@ -36,8 +43,6 @@ public class AppController{
 	private Label levelLabel;
 	@FXML
 	private Label titleLevelLabel;
-	@FXML
-	private Button acumulativeButton;
 	@FXML
 	private Button updateButton;
 	@FXML
@@ -48,17 +53,34 @@ public class AppController{
 
 	public void initialize(){
 		this.service = new AppService();
-		treeMapPanel.prefHeightProperty().bind(backgroundBox.heightProperty().subtract(192));
+		//treeMapPanel.prefHeightProperty().bind(background.heightProperty().subtract(192));
+		AppUtils.changeButtonState(showFileOrExtensionButton, false);
+		AppUtils.changeButtonState(acumulativeButton, false);
+		AppUtils.changeButtonState(executableButton, false);
+		AppUtils.changeButtonState(showFilenamesButton, true);
+
+		levelLabel.setText(Integer.toString(service.getRenderConfiguration().getLimitLevel()));
+		titleLevelLabel.setText(Integer.toString(service.getRenderConfiguration().getLimitLevelTitle()));
 	}
 
 	@FXML
 	private void selectDirectory(ActionEvent event) {
-		DirectoryChooser selector=new DirectoryChooser();
-		selector.setTitle("Select a directory");
-		selector.setInitialDirectory(new File(directoryTextField.getText()));
-		File selectedDirectory=selector.showDialog(null);
-		if(selectedDirectory!=null)
-				initDirectory(selectedDirectory.getAbsolutePath());
+		DirectoryChooser selector = new DirectoryChooser();
+    selector.setTitle("Select a directory");
+
+    String path = directoryTextField.getText();
+    File initialDir = new File(path);
+    if (initialDir.exists() && initialDir.isDirectory()) {
+        selector.setInitialDirectory(initialDir);
+    } else {
+        selector.setInitialDirectory(null);
+    }
+
+    File selectedDirectory = selector.showDialog(null);
+		if(selectedDirectory!=null){
+			directoryTextField.setText(selectedDirectory.getAbsolutePath());
+			initDirectory(selectedDirectory.getAbsolutePath());
+		}
 		else
 				AppUtils.showErrorAlert("There is not selected directory.");
 	}
@@ -73,7 +95,11 @@ public class AppController{
 		//Reconfigurate panel size
 		treeMapPanel.setPrefSize(treeMapPanel.getWidth(), treeMapPanel.getHeight());
 		//Create directory tree
-		MultiTree directoryTree = service.initDirectory(path);
+		MultiTree<Info> directoryTree = service.initDirectory(path);
+		TreeRender render = new TreeRender(directoryTree, service.getRenderConfiguration());
+		//Init directory tree presentation
+		MultiTree<PresentationNode> presentationTree = render.initialize(treeMapPanel);
+		render.render(presentationTree, treeMapPanel);
 	}
 
 	@FXML
@@ -93,14 +119,19 @@ public class AppController{
 
 		newWindow.show();*/
 	}
-	private void toggleMode(Button button, Modes mode) {
+	/* TODO Rerenderizar arbol */
+	private boolean toggleMode(Button button, Modes mode) {
 		boolean isActive = service.changeMode(mode);
 		AppUtils.changeButtonState(button, isActive);
+		return isActive;
 	}
 
 	@FXML
 	private void changeFileExtensionMode(ActionEvent event) {
-		toggleMode(showFileOrExtensionButton, Modes.FILE_EXTENSION);
+		boolean isActive = toggleMode(showFileOrExtensionButton, Modes.FILE_EXTENSION);
+		acumulativeButton.setDisable(!isActive);
+		if(acumulativeButton.isDisable())
+			AppUtils.changeButtonState(acumulativeButton, false);
 	}
 
 	@FXML
@@ -135,12 +166,12 @@ public class AppController{
 	@FXML
 	private void incrementLevelTitle(ActionEvent event) {
 		int level = service.incrementLevelTitle();
-		updateLevel(levelLabel, level);
+		updateLevel(titleLevelLabel, level);
 	}
 	@FXML
 	private void decrementLevelTitle(ActionEvent event) {
 		int level = service.decrementLevelTitle();
-		updateLevel(levelLabel, level);
+		updateLevel(titleLevelLabel, level);
 	}
 
 }

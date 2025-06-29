@@ -1,43 +1,40 @@
 package com.emiliosg23.view;
 
 import com.emiliosg23.models.infos.FileInfo;
+import com.emiliosg23.utils.FileExtensionUtils;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
 
 public class FilePresentationNode extends PresentationNode{
-	public FilePresentationNode(FileInfo info, boolean showFilename){
-		super(info, showFilename);
+	private final boolean showFilename;
+	private final boolean executableMode;
+
+	public FilePresentationNode(FileInfo info, boolean showFilename, boolean executableMode){
+		super(info);
+		this.showFilename = showFilename;
+		this.executableMode = executableMode;
 	}
 
+	public boolean showFilename(){return this.showFilename;}
+	public boolean isExecutableMode(){return this.executableMode;}
+
 	@Override
-	public VBox createNode(boolean vertical, boolean showSize) {
-		final int MIN_PREF_SIZE = 10;
-		double prefWidth = getTreeNode().getPrefWidth();
-		double prefHeight = getTreeNode().getHeight();
+	public VBox createNode(boolean showSize) {
+		final int MIN_SIZE = 10;
+		VBox rootPane = getTreePane();
+		rootPane.setAlignment(Pos.CENTER);
 
-		VBox node=new VBox();
-		node.setAlignment(Pos.TOP_CENTER);
-		
-		if(getTitle()!=null)
-			getTitle().setPrefWidth(prefWidth);
-
-		if (showFilename() && prefWidth >= MIN_PREF_SIZE && prefHeight >= MIN_PREF_SIZE){
-			Font font=Font.font("Consolas",9);
-			Label filename;
-			if(showSize)
-					filename =new Label(getInfo().toString());
-					else
-					filename=new Label(getInfo().getName());
-
-			filename.setFont(font);
-			getTreeNode().getChildren().add(filename);
+		if (rootPane.getPrefWidth() > MIN_SIZE && rootPane.getPrefHeight() > MIN_SIZE){
+			Label filenameLabel = new Label(showFilename ? getInfo().getName() : "");
+			filenameLabel.getStyleClass().add("title-file");
+			rootPane.getChildren().add(filenameLabel);
 		}
 
-		node.setPrefWidth(prefWidth);
-		node.setPrefHeight(prefHeight);
-		node.getChildren().add(getTreeNode());
-		return node;
+		String extension = ((FileInfo) getInfo()).getExtension();
+		rootPane.setStyle("-fx-background-color:"+FileExtensionUtils.getColor(extension)+";");
+		
+		setTreePane(rootPane);
+		return rootPane;
 	}
 }
