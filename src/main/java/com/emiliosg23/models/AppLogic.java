@@ -1,5 +1,6 @@
 package com.emiliosg23.models;
 
+import com.emiliosg23.logic.TreeInfoGenerator;
 import com.emiliosg23.models.enums.Modes;
 import com.emiliosg23.models.infos.FileInfo;
 import com.emiliosg23.models.infos.Info;
@@ -8,91 +9,80 @@ import com.emiliosg23.models.tdas.trees.MultiTree;
 import javafx.scene.layout.Pane;
 
 public class AppLogic {
-	private final int numLevelLimit=20;
-	private final int numLevelTitleLimit=3;
-	
-	private boolean fileExtensionMode;
-	private boolean acumulativeMode;
-	private boolean executableMode;
-
-	private boolean showFilenames;
+	private final PanelConfiguration panelConfiguration;
+	private final TreeInfoGenerator treeGenerator;
 
 	private MultiTree<Info> directoryTree;
-	
-	private int limitLevel;
-	private int limitLevelTitle;
 
-	public boolean changeMode(Modes mode){
-		if(mode == Modes.ACUMULATIVE)
-			return this.acumulativeMode = !this.acumulativeMode;
-		if(mode == Modes.EXECUTABLE)
-			return this.executableMode = !this.executableMode;
-		if(mode == Modes.FILE_EXTENSION)
-			return this.fileExtensionMode = !this.fileExtensionMode;
-		throw new RuntimeException("Selected mode is not available");
+	public AppLogic() {
+		this.panelConfiguration = new PanelConfiguration();
+		this.treeGenerator = new TreeInfoGenerator();
 	}
 
-	public boolean showFilenames(){
-		return this.showFilenames = !this.showFilenames;
+	public void changeDirectory(String directory) {
+		this.panelConfiguration.setDirectory(directory);
 	}
 
-	public int addLimitLevel(){
-		this.limitLevel++;
-		return this.limitLevel;
-	}
-	public int substractLimitLevel(){
-		this.limitLevel--;
-		return this.limitLevel;
-	}
-	public int addLimitTitleLevel(){
-		this.limitLevelTitle++;
-		return this.limitLevelTitle;
-	}
-	public int substractLimitTitleLevel(){
-		this.limitLevelTitle--;
-		return this.limitLevelTitle;
+	public MultiTree<Info> createTreeDirectory() {
+		String directory = panelConfiguration.getDirectory();
+		int depthLimit = panelConfiguration.getRenderConfiguration().getLimitLevel();
+		this.directoryTree = treeGenerator.createTree(directory, depthLimit);
+		return this.directoryTree;
 	}
 
-	public void reset(){
-			/*cambiarModoArchivoExtension(false);
-			mostrarNombres(true);
-			cambiarModoEjecutable(false);
-			cambiarModoAcumulativo(false);
-			iniciarDirectorio("C:\\");
-			setLimitLevel(8);
-			setLimitLevelTitle(2);*/
-    }
+	public MultiTree<Info> transformTreeDirectory() {
+		MultiTree<Info> tree = this.directoryTree;
 
-		public void update(){
+		if (panelConfiguration.isFileExtensionMode())
+			tree = treeGenerator.transformTree(tree, Modes.FILE_EXTENSION);
 
-		}
+		if (panelConfiguration.isFileExtensionMode() && panelConfiguration.isAcumulativeMode())
+			tree = treeGenerator.transformTree(tree, Modes.ACUMULATIVE);
 
-    private void iniciarDirectorio(String directorio,boolean save){
-        /*
-         boolean vertical=false;
-        try{
-            this.directoryTree=TreeFileUtils.createTreeDirectory(directorio,vertical,this.limitLevel);
-            if(fileExtensionMode){
-                this.directoryTree=TreeFileUtils.createTreeDirectoryExtension(this.directoryTree,vertical,this.limitLevel);
-                if(acumulativeMode)
-                    this.directoryTree=TreeFileUtils.createTreeDirectoryAcumulative(this.directoryTree,vertical);
-            }
-        }catch(Exception e){
-            alert.close();
-            btnActualizar.setDisable(true);
-            AppUtils.showErrorAlert("Ha ocurrido un error al momento de cargar los directorios y/o archivos");
-            return;
-        }
-        initializeTreeMaps(directoryTree, paneTreeMap, directoryTree.getRoot().getContent().getSize(), limitLevelTitle, limitLevel,vertical);
-        fillPaneTreeMap(paneTreeMap,directoryTree,true,this.showFilenames);
-        alert.close();*/
-    }
-    private void iniciarDirectorio(String directorio){
-        //iniciarDirectorio(directorio,true);
-    }
-    private void iniciarDirectorio(){
-        //iniciarDirectorio(txtDirectorio.getText(),false);
-    }
+		return tree;
+	}
+
+	public boolean changeMode(Modes mode) {
+		return this.panelConfiguration.changeMode(mode);
+	}
+
+	// Delega a RenderConfiguration
+	public boolean toggleShowFilenames() {
+		return this.panelConfiguration.getRenderConfiguration().toggleShowFilenames();
+	}
+
+	public int increaseLimitLevel() {
+		return this.panelConfiguration.getRenderConfiguration().increaseLimitLevel();
+	}
+
+	public int decreaseLimitLevel() {
+		return this.panelConfiguration.getRenderConfiguration().decreaseLimitLevel();
+	}
+
+	public int increaseLimitTitleLevel() {
+		return this.panelConfiguration.getRenderConfiguration().increaseTitleLimitLevel();
+	}
+
+	public int decreaseLimitTitleLevel() {
+		return this.panelConfiguration.getRenderConfiguration().decreaseTitleLimitLevel();
+	}
+
+	public void reset() {
+		this.panelConfiguration.reset();
+	}
+
+	// Acceso a la configuración si hace falta en otras partes
+	public RenderConfiguration getRenderConfiguration() {
+		return this.panelConfiguration.getRenderConfiguration();
+	}
+
+	public PanelConfiguration getPanelConfiguration() {
+		return this.panelConfiguration;
+	}
+
+	public void update(){
+
+	}
     
     private void initializeTreeMaps(MultiTree<FileInfo> directoryTree,Pane paneRoot,long sizeParent,int limitLevelTitle,int limitLevel,boolean vertical){
         /*MultiTreeNode<FileInfo> root=directoryTree.getRoot();

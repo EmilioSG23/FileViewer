@@ -18,6 +18,10 @@ public class TreeInfoGenerator {
 			);
 	}
 
+	public MultiTree<Info> createTree(String directory, int limit){
+		return createTree(directory, false, limit);
+	}
+
 	public MultiTree<Info> createTree(String directory, boolean vertical, int limit) {
     if (limit <= 0) return null;
 

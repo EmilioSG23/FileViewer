@@ -62,7 +62,6 @@ public class MultiTree<T> {
     }
     
     public boolean equals(MultiTree<T> tree){
-        System.out.println("yep");
         return getRoot().equals(tree.getRoot());
     }
      
