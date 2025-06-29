@@ -18,12 +18,12 @@ public class TreeInfoGenerator {
 			);
 	}
 
-	public MultiTree<Info> createTree(String directory, int limit){
-		return createTree(directory, false, limit);
+	public MultiTree<Info> createTree(String directory){
+		return createTree(directory, false);
 	}
 
-	public MultiTree<Info> createTree(String directory, boolean vertical, int limit) {
-    if (limit <= 0) return null;
+	public MultiTree<Info> createTree(String directory, boolean vertical) {
+    //if (limit <= 0) return null;
 
     File file = new File(directory);
     Info info = file.isFile() ? new FileInfo(file) : new DirectoryInfo(file);
@@ -43,7 +43,7 @@ public class TreeInfoGenerator {
         File child = new File(file, childName);
 
         if (child.isDirectory()) {
-            MultiTree<Info> childTree = createTree(child.getAbsolutePath(), !vertical, limit - 1);
+            MultiTree<Info> childTree = createTree(child.getAbsolutePath(), !vertical);
             if (childTree != null) {
                 tree.addChild(childTree);
                 accumulatedSize += childTree.getRoot().getContent().getSize();
@@ -66,4 +66,30 @@ public class TreeInfoGenerator {
     if (strategy == null) throw new IllegalArgumentException("Unsupported mode: " + mode);
     return strategy.transform(tree);
 	}
+
+	public MultiTree<Info> copyTree(MultiTree<Info> tree) {
+    Info originalContent = tree.getRoot().getContent();
+    Info copiedContent = copyInfo(originalContent);
+
+    MultiTree<Info> copiedTree = new MultiTree<>(copiedContent);
+    for (MultiTree<Info> child : tree.getRoot().getChildren()) {
+        copiedTree.addChild(copyTree(child));
+    }
+    return copiedTree;
+	}
+
+  private Info copyInfo(Info info) {
+    if (info == null) {
+        throw new IllegalArgumentException("Info parameter is null");
+    }
+    if (info instanceof DirectoryInfo) {
+        DirectoryInfo dir = (DirectoryInfo) info;
+        return new DirectoryInfo(dir.getName(), dir.getSize()); // o atributos necesarios
+    } else if (info instanceof FileInfo) {
+        FileInfo file = (FileInfo) info;
+        return new FileInfo(file.getName(), file.getSize(), file.getFullPath(), file.getExtension());
+    } else {
+        throw new IllegalArgumentException("Unsupported Info type: " + info.getClass());
+    }
+  }
 }

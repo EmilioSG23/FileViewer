@@ -1,17 +1,11 @@
 package com.emiliosg23.utils;
 
-import java.net.URL;
-
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.layout.Pane;
 
 public class AppUtils {
-	private static final String GREEN="rgb(160,255,120)";
-  private static final String RED="rgb(255,95,95)";
-
-
 	public static void showErrorAlert(String msg){
 		Alert alert=new Alert(Alert.AlertType.ERROR,msg);
 		alert.setHeaderText(null);
@@ -30,10 +24,11 @@ public class AppUtils {
 		return alert.showAndWait().get()==ButtonType.OK;
 	}
 
-	public static void showLoadingAlert(){
-		Alert alert=new Alert(Alert.AlertType.INFORMATION,"Loading...");
+	public static Alert showLoadingAlert(String msg){
+		Alert alert=new Alert(Alert.AlertType.INFORMATION, msg);
 		alert.setHeaderText(null);
 		alert.show();
+		return alert;
 	}
 
 	public static void changeButtonState(Button button, boolean isActive){

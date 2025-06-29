@@ -1,11 +1,10 @@
 package com.emiliosg23.controllers;
 
-import java.io.Console;
 import java.io.File;
 import java.io.IOException;
 
+import com.emiliosg23.App;
 import com.emiliosg23.models.AppService;
-import com.emiliosg23.models.RenderConfiguration;
 import com.emiliosg23.models.enums.Modes;
 import com.emiliosg23.models.infos.Info;
 import com.emiliosg23.models.tdas.trees.MultiTree;
@@ -15,12 +14,16 @@ import com.emiliosg23.view.TreeRender;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public class AppController{
 	@FXML
@@ -49,16 +52,19 @@ public class AppController{
 	private Button helpButton;
 
 	private AppService service;
+	private TreeRender render;
 
 
 	public void initialize(){
 		this.service = new AppService();
+		this.render = new TreeRender();
 		//treeMapPanel.prefHeightProperty().bind(background.heightProperty().subtract(192));
-		AppUtils.changeButtonState(showFileOrExtensionButton, false);
-		AppUtils.changeButtonState(acumulativeButton, false);
-		AppUtils.changeButtonState(executableButton, false);
-		AppUtils.changeButtonState(showFilenamesButton, true);
+		AppUtils.changeButtonState(showFileOrExtensionButton, service.getPanelConfiguration().isFileExtensionMode());
+		AppUtils.changeButtonState(acumulativeButton, service.getPanelConfiguration().isAcumulativeMode());
+		AppUtils.changeButtonState(executableButton, service.getPanelConfiguration().isExecutableMode());
+		AppUtils.changeButtonState(showFilenamesButton, service.getRenderConfiguration().isShowFilenames());
 
+		directoryTextField.setText(service.getPanelConfiguration().getDirectory());
 		levelLabel.setText(Integer.toString(service.getRenderConfiguration().getLimitLevel()));
 		titleLevelLabel.setText(Integer.toString(service.getRenderConfiguration().getLimitLevelTitle()));
 	}
@@ -90,26 +96,55 @@ public class AppController{
 				AppUtils.showErrorAlert("There is not selected directory.");
 				return;
 		}
-		//Reset panel
-		treeMapPanel.getChildren().clear();
 		//Reconfigurate panel size
 		treeMapPanel.setPrefSize(treeMapPanel.getWidth(), treeMapPanel.getHeight());
 		//Create directory tree
+		Alert generating = AppUtils.showLoadingAlert("Generating tree...");
 		MultiTree<Info> directoryTree = service.initDirectory(path);
-		TreeRender render = new TreeRender(directoryTree, service.getRenderConfiguration());
+		generating.close();
+		processTreeGenerator(directoryTree, treeMapPanel);
+	}
+	
+	private void processTreeGenerator(MultiTree<Info> tree, HBox panel){
+		Alert initializing = AppUtils.showLoadingAlert("Initializing tree...");
+		//Config Render Engine
+		render.setTree(tree);
+		render.setConfig(service.getRenderConfiguration());
 		//Init directory tree presentation
-		MultiTree<PresentationNode> presentationTree = render.initialize(treeMapPanel);
-		render.render(presentationTree, treeMapPanel);
+		MultiTree<PresentationNode> presentationTree = render.initialize(panel);
+		initializing.close();
+		//Render directory tree
+		Alert rendering = AppUtils.showLoadingAlert("Rendering tree...");
+		render.render(presentationTree, panel);
+		rendering.close();
+	}
+
+	private void update(){
+		MultiTree<Info> updatedDirectoryTree = service.update();
+		if (updatedDirectoryTree != null)
+			processTreeGenerator(updatedDirectoryTree, treeMapPanel);
 	}
 
 	@FXML
 	private void reset(ActionEvent event) {
-			service.reset();
+		service.reset();
+		treeMapPanel.getChildren().clear();
+
+		AppUtils.changeButtonState(showFileOrExtensionButton, service.getPanelConfiguration().isFileExtensionMode());
+		AppUtils.changeButtonState(acumulativeButton, service.getPanelConfiguration().isAcumulativeMode());
+		AppUtils.changeButtonState(executableButton, service.getPanelConfiguration().isExecutableMode());
+		AppUtils.changeButtonState(showFilenamesButton, service.getRenderConfiguration().isShowFilenames());
+
+		acumulativeButton.setDisable(true);
+		executableButton.setDisable(true);
+
+		directoryTextField.setText(service.getPanelConfiguration().getDirectory());
+		levelLabel.setText(Integer.toString(service.getRenderConfiguration().getLimitLevel()));
+		titleLevelLabel.setText(Integer.toString(service.getRenderConfiguration().getLimitLevelTitle()));
 	}
 	@FXML
 	private void help(ActionEvent event) throws IOException {
-		/* TODO: Incluir ayuda.fxml */
-		/*Scene secondScene = new Scene(App.loadFXML("ayuda"), 450, 600);
+		Scene secondScene = new Scene(App.loadFXML("ayuda"), 450, 600);
 		Stage newWindow = new Stage();
 		newWindow.setTitle("Ayuda");
 		newWindow.setScene(secondScene);
@@ -117,40 +152,56 @@ public class AppController{
 		newWindow.initOwner(App.getStage());
 		newWindow.centerOnScreen();
 
-		newWindow.show();*/
+		newWindow.show();
 	}
-	/* TODO Rerenderizar arbol */
+
 	private boolean toggleMode(Button button, Modes mode) {
-		boolean isActive = service.changeMode(mode);
+		boolean isActive = service.toogleMode(mode);
 		AppUtils.changeButtonState(button, isActive);
 		return isActive;
+	}
+
+	private boolean changeMode(Button button, Modes mode, boolean enable){
+		service.changeMode(mode, enable);
+		AppUtils.changeButtonState(button, enable);
+		return enable;
 	}
 
 	@FXML
 	private void changeFileExtensionMode(ActionEvent event) {
 		boolean isActive = toggleMode(showFileOrExtensionButton, Modes.FILE_EXTENSION);
 		acumulativeButton.setDisable(!isActive);
-		if(acumulativeButton.isDisable())
-			AppUtils.changeButtonState(acumulativeButton, false);
+		changeMode(acumulativeButton, Modes.ACUMULATIVE, false);
+		update();
 	}
 
 	@FXML
-	private void changeExecutableMode(ActionEvent event) {
-		toggleMode(executableButton, Modes.EXECUTABLE);
-	}
+private void changeExecutableMode(ActionEvent event) {
+	boolean isActive = toggleMode(executableButton, Modes.EXECUTABLE);
+
+	showFileOrExtensionButton.setDisable(isActive);
+	acumulativeButton.setDisable(true);
+	changeMode(showFileOrExtensionButton, Modes.FILE_EXTENSION, false);
+	changeMode(acumulativeButton, Modes.ACUMULATIVE, false);
+	update();
+}
+
 
 	@FXML
 	private void changeAcumulativeMode(ActionEvent event) {
 		toggleMode(acumulativeButton, Modes.ACUMULATIVE);
+		update();
 	}
 
 	@FXML
 	private void showFilenames(ActionEvent event) {
 		boolean showFilenames = service.showFilenames();
+		update();
 		AppUtils.changeButtonState(showFilenamesButton, showFilenames);
 	}
 
 	private void updateLevel(Label field, int level){
+		update();
 		field.setText(Integer.toString(level));
 	}
 	@FXML
