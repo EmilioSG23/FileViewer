@@ -83,7 +83,7 @@
 .title-file {
 	-fx-text-fill: rgb(0, 0, 0);
 	-fx-font-family: "Consolas";
-	-fx-font-size: 8;
+	-fx-font-size: 10;
 }
 
 .tree-node {

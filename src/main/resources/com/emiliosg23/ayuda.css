@@ -1,0 +1,62 @@
+/*
+ * Empty Stylesheet file.
+ */
+#directorio{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(255,240,100);
+}
+#ejecutable{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(125, 125, 125);
+}
+#word{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(100, 157, 255);
+}
+#powerpoint{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(240, 150, 97);
+}
+#excel{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(90, 205, 0);
+}
+#texto{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(200, 200, 200);
+}
+#pdf{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(255, 83, 140);
+}
+#fotos{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(150, 250, 255);
+}
+#videos{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(255, 100, 255);
+}
+#audio{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(100, 255, 200);
+}
+#zip{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(215, 1, 130);
+}
+#java{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(255, 180, 120);
+}
+#python{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(50, 50, 50);
+}
+#otros{
+    -fx-background-size: 100% 100%;
+    -fx-background-color:rgb(200, 200, 200);
+}
+.mainFxmlClass {
+
+}
