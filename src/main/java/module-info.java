@@ -2,6 +2,7 @@ module com.emiliosg23 {
     requires javafx.controls;
     requires javafx.fxml;
 		requires java.desktop;
+		requires java.prefs;
 		requires transitive javafx.graphics;
 
     opens com.emiliosg23 to javafx.fxml;

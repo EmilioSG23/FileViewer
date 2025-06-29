@@ -2,7 +2,7 @@ package com.emiliosg23.controllers;
 
 import java.io.File;
 import java.io.IOException;
-
+import java.util.prefs.Preferences;
 import com.emiliosg23.App;
 import com.emiliosg23.models.AppService;
 import com.emiliosg23.models.enums.Modes;
@@ -23,6 +23,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
@@ -57,6 +58,10 @@ public class AppController{
 
 
 	public void initialize(){
+		Preferences prefs = Preferences.userNodeForPackage(AppController.class);
+    String savedTheme = prefs.get("theme", ThemeStyle.DARK.name()); // Valor por defecto
+		currentTheme = ThemeStyle.valueOf(savedTheme);
+
 		themeComboBox.getItems().setAll(ThemeStyle.values());
     themeComboBox.setValue(currentTheme);
 
@@ -73,6 +78,16 @@ public class AppController{
             }
         });
     }
+
+		// Clipping (recorte) para treeMapPanel
+    Rectangle clip = new Rectangle();
+    treeMapPanel.setClip(clip);
+
+    // Actualizar el tamaño del clip dinámicamente cuando el tamaño del panel cambie
+    treeMapPanel.layoutBoundsProperty().addListener((obs, oldVal, newVal) -> {
+        clip.setWidth(newVal.getWidth());
+        clip.setHeight(newVal.getHeight());
+    });
 
 		this.service = new AppService();
 		this.render = new TreeRender();
@@ -248,6 +263,10 @@ private void changeExecutableMode(ActionEvent event) {
     ThemeStyle selected = themeComboBox.getValue();
     if (selected != null && selected != currentTheme) {
         currentTheme = selected;
+
+				Preferences prefs = Preferences.userNodeForPackage(AppController.class);
+				prefs.put("theme", currentTheme.name());
+
         Scene scene = themeComboBox.getScene();
         if (scene != null) {
             scene.getStylesheets().clear();

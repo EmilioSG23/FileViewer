@@ -54,7 +54,7 @@ public class DirectoryPresentationNode extends PresentationNode{
 		}
 
 		//Insert directory title
-		if(showTitle && rootPane.getPrefWidth() > MIN_SIZE){
+		if(showTitle && rootPane.getPrefWidth() > MIN_SIZE && rootPane.getPrefHeight() > MIN_SIZE){
 			createTitle();
 			rootPane.getChildren().add(title);
 		}
