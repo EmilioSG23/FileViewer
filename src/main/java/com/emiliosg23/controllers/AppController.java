@@ -10,6 +10,7 @@ import com.emiliosg23.models.infos.Info;
 import com.emiliosg23.models.tdas.trees.MultiTree;
 import com.emiliosg23.utils.AppUtils;
 import com.emiliosg23.view.PresentationNode;
+import com.emiliosg23.view.ThemeStyle;
 import com.emiliosg23.view.TreeRender;
 
 import javafx.event.ActionEvent;
@@ -17,6 +18,7 @@ import javafx.fxml.FXML;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.HBox;
@@ -47,15 +49,31 @@ public class AppController{
 	@FXML
 	private Label titleLevelLabel;
 	@FXML
-	private Button updateButton;
-	@FXML
-	private Button helpButton;
+	private ComboBox<ThemeStyle> themeComboBox;
 
 	private AppService service;
 	private TreeRender render;
+	private ThemeStyle currentTheme = ThemeStyle.LIGHT;
 
 
 	public void initialize(){
+		themeComboBox.getItems().setAll(ThemeStyle.values());
+    themeComboBox.setValue(currentTheme);
+
+    Scene scene = themeComboBox.getScene();
+    if (scene != null) {
+        scene.getStylesheets().clear();
+        scene.getStylesheets().add(currentTheme.getPath());
+    } else {
+        themeComboBox.sceneProperty().addListener((obs, oldScene, newScene) -> {
+            if (newScene != null) {
+                newScene.getStylesheets().clear();
+                //newScene.getStylesheets().add(getClass().getResource("/app.css").toExternalForm());
+                newScene.getStylesheets().add(currentTheme.getPath());
+            }
+        });
+    }
+
 		this.service = new AppService();
 		this.render = new TreeRender();
 		//treeMapPanel.prefHeightProperty().bind(background.heightProperty().subtract(192));
@@ -225,4 +243,16 @@ private void changeExecutableMode(ActionEvent event) {
 		updateLevel(titleLevelLabel, level);
 	}
 
+	@FXML
+	private void changeTheme(ActionEvent event) {
+    ThemeStyle selected = themeComboBox.getValue();
+    if (selected != null && selected != currentTheme) {
+        currentTheme = selected;
+        Scene scene = themeComboBox.getScene();
+        if (scene != null) {
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(currentTheme.getPath());
+        }
+    }
+	}
 }

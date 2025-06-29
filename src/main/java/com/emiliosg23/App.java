@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 import java.io.IOException;
+import java.net.URL;
 
 /**
  * JavaFX App
@@ -28,6 +29,7 @@ public class App extends Application {
     public void start(Stage stage) throws IOException {
         scene = new Scene(loadFXML("App"), 1360, 768);
         stage.setScene(scene);
+				stage.setMaximized(true);
         stage.show();
         App.stage=stage;
     }

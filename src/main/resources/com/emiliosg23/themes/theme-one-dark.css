@@ -1,0 +1,25 @@
+#background {
+	-fx-background-color: #282c34 !important;
+	-fx-text-fill: #abb2bf !important;
+}
+#background Label,
+#background TextField,
+#background Button,
+#background TextArea,
+#background .text {
+	-fx-text-fill: #abb2bf;
+}
+
+#viewerBackground {
+	-fx-background-color: #21252b !important;
+	-fx-text-fill: #abb2bf !important;
+}
+
+#panelBackground {
+	-fx-background-color: #1c1f24 !important;
+}
+
+.button {
+	-fx-background-color: #61afef;
+	-fx-text-fill: white !important;
+}

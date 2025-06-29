@@ -1,0 +1,26 @@
+/* theme-monokai.css */
+#background {
+	-fx-background-color: #f92672 !important;
+	-fx-text-fill: #f8f8f2 !important;
+}
+#background Label,
+#background TextField,
+#background Button,
+#background TextArea,
+#background .text {
+	-fx-text-fill: #f8f8f2;
+}
+
+#viewerBackground {
+	-fx-background-color: #3e3d32 !important;
+	-fx-text-fill: #f8f8f2 !important;
+}
+
+#panelBackground {
+	-fx-background-color: #1b1c17 !important;
+}
+
+.button {
+	-fx-background-color: #f92672;
+	-fx-text-fill: #ffffff;
+}

@@ -1,0 +1,23 @@
+#background {
+	-fx-background-color: rgb(50, 50, 50) !important;
+}
+#background Label,
+#background TextField,
+#background Button,
+#background TextArea,
+#background .text {
+	-fx-text-fill: black;
+}
+
+#viewerBackground {
+	-fx-background-color: rgb(200, 200, 200) !important;
+}
+
+#panelBackground {
+	-fx-background-color: white;
+}
+
+.button {
+	-fx-background-color: #dddddd;
+	-fx-text-fill: #000000;
+}

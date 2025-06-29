@@ -11,13 +11,11 @@ public class FileOpener {
             throw new IllegalArgumentException("El archivo es nulo o no existe: " + file);
         }
 
-        // Método 1: Java Desktop API (portable)
         if (Desktop.isDesktopSupported()) {
             Desktop.getDesktop().open(file);
             return;
         }
 
-        // Método 2: Comando del sistema según el SO
         String os = System.getProperty("os.name").toLowerCase();
 
         if (os.contains("win")) {
