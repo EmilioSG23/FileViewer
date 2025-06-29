@@ -2,11 +2,8 @@ package com.emiliosg23.models;
 
 import com.emiliosg23.logic.TreeInfoGenerator;
 import com.emiliosg23.models.enums.Modes;
-import com.emiliosg23.models.infos.FileInfo;
 import com.emiliosg23.models.infos.Info;
 import com.emiliosg23.models.tdas.trees.MultiTree;
-
-import javafx.scene.layout.Pane;
 
 public class AppLogic {
 	private final PanelConfiguration panelConfiguration;
@@ -25,13 +22,13 @@ public class AppLogic {
 
 	public MultiTree<Info> createTreeDirectory() {
 		String directory = panelConfiguration.getDirectory();
-		int depthLimit = panelConfiguration.getRenderConfiguration().getLimitLevel();
-		this.directoryTree = treeGenerator.createTree(directory, depthLimit);
+		this.directoryTree = treeGenerator.createTree(directory);
 		return this.directoryTree;
 	}
 
 	public MultiTree<Info> transformTreeDirectory() {
-		MultiTree<Info> tree = this.directoryTree;
+		if (directoryTree == null) return null;
+		MultiTree<Info> tree = treeGenerator.copyTree(directoryTree);
 
 		if (panelConfiguration.isFileExtensionMode())
 			tree = treeGenerator.transformTree(tree, Modes.FILE_EXTENSION);
@@ -42,11 +39,14 @@ public class AppLogic {
 		return tree;
 	}
 
-	public boolean changeMode(Modes mode) {
-		return this.panelConfiguration.changeMode(mode);
+	public boolean toogleMode(Modes mode) {
+		return this.panelConfiguration.toogleMode(mode);
 	}
 
-	// Delega a RenderConfiguration
+	public boolean changeMode(Modes mode, boolean enable){
+		return this.panelConfiguration.changeMode(mode, enable);
+	}
+
 	public boolean toggleShowFilenames() {
 		return this.panelConfiguration.getRenderConfiguration().toggleShowFilenames();
 	}
@@ -69,6 +69,7 @@ public class AppLogic {
 
 	public void reset() {
 		this.panelConfiguration.reset();
+		this.directoryTree = null;
 	}
 
 	// Acceso a la configuración si hace falta en otras partes
@@ -79,27 +80,4 @@ public class AppLogic {
 	public PanelConfiguration getPanelConfiguration() {
 		return this.panelConfiguration;
 	}
-
-	public void update(){
-
-	}
-    
-    private void initializeTreeMaps(MultiTree<FileInfo> directoryTree,Pane paneRoot,long sizeParent,int limitLevelTitle,int limitLevel,boolean vertical){
-        /*MultiTreeNode<FileInfo> root=directoryTree.getRoot();
-        if(limitLevelTitle>0)
-            root.getContent().initializePresentationNode(sizeParent, paneRoot, true,vertical);
-        else if(limitLevel>0)
-            root.getContent().initializePresentationNode(sizeParent, paneRoot, false,vertical);
-        for(MultiTree<FileInfo> child:directoryTree.getRoot().getChildren())
-                initializeTreeMaps(child, root.getContent().getPresentationNode().getTreeMap(), root.getContent().getSize(), limitLevelTitle-1, limitLevel-1,!vertical);
-    */}
-    private void fillPaneTreeMap(Pane pane,MultiTree<FileInfo> directoryTree, boolean resetPane,boolean showFilenames){
-        /*if(resetPane)
-            resetPane(pane);
-        MultiTreeNode<FileInfo> root=directoryTree.getRoot();
-        if(!root.getChildren().isEmpty())
-            for(MultiTree<FileInfo> child:root.getChildren())
-                fillPaneTreeMap(root.getContent().getPresentationNode().getTreeMap(),child,false,showFilenames);
-        pane.getChildren().add(directoryTree.getRoot().getContent().createPresentationNode(showFilenames));*/
-    }
 }

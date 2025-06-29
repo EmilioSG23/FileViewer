@@ -42,6 +42,11 @@ public class RenderConfiguration {
 		return executableMode;
 	}
 
+	public boolean changeExecutableMode(boolean enable){
+		executableMode = enable;
+		return executableMode;
+	}
+
 	// LIMIT LEVEL ADJUSTMENT
 	public int increaseLimitLevel() {
 		if (limitLevel < MAX_NUM_LEVEL_LIMIT)

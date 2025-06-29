@@ -26,12 +26,16 @@ public class AppService {
 		app.reset();
 	}
 	
-	public void update() {
-		app.update();
+	public MultiTree<Info> update() {
+		return this.app.transformTreeDirectory();
 	}
 
-	public boolean changeMode(Modes mode){
-		return app.changeMode(mode);
+	public boolean toogleMode(Modes mode){
+		return app.toogleMode(mode);
+	}
+
+	public boolean changeMode(Modes mode, boolean enable){
+		return app.changeMode(mode, enable);
 	}
 
 	public boolean showFilenames() {
@@ -56,5 +60,9 @@ public class AppService {
 
 	public RenderConfiguration getRenderConfiguration(){
 		return app.getRenderConfiguration();
+	}
+
+	public PanelConfiguration getPanelConfiguration(){
+		return app.getPanelConfiguration();
 	}
 }
