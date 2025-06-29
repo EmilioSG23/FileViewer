@@ -62,7 +62,7 @@ public class FileExtensionUtils {
         g = clamp(g + delta);
         b = clamp(b + delta);
         double opacity = 0.7 + Math.random() * 0.3; // between 0.7 and 1.0
-        return String.format("rgba(%d, %d, %d, %.2f)", r, g, b, opacity);
+        return String.format(Locale.US, "rgba(%d, %d, %d, %.2f)", r, g, b, opacity);
     }
 
     private static int clamp(int value) {

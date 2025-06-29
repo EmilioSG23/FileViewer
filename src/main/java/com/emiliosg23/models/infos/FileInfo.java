@@ -17,7 +17,7 @@ public class FileInfo extends Info{
 	}
 	public FileInfo(File file){
 		super(file.getName());
-		this.extension = FileUtils.lastDirectory(file.toString());
+		this.extension = FileUtils.extractExtension(file.toString());
 	}
 
 	public String getExtension(){

@@ -1,10 +1,16 @@
 package com.emiliosg23.utils;
 
 public class FileUtils {
-	public static String lastDirectory(String directorio){
-		String[] tokens=directorio.split("\\\\");
+	public static String lastDirectory(String directory){
+		String[] tokens=directory.split("\\\\");
 		return tokens[tokens.length-1];
 	}
+
+	public static String extractExtension(String filename){
+		String[] tokens = filename.split("\\.");
+		return "." + tokens[tokens.length - 1];
+	}
+
 	public static String getConvertedSize(long size) {
 		if (size <= 0) return "0 bytes";
 
