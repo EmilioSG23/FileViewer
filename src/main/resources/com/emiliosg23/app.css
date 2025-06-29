@@ -2,14 +2,14 @@
  * Empty Stylesheet file.
  */
 
-#btnAyuda {
+#helpButton {
 	-fx-background-size: 100% 100%;
 	-fx-background-color: rgb(35, 195, 255);
 	-fx-background-image: url("imagenes/ayuda.png");
 	-fx-background-radius: 9999px;
 	-fx-cursor: pointer;
 }
-#btnAyuda:hover {
+#helpButton:hover {
 	-fx-background-color: rgb(85, 208, 253);
 	-fx-background-image: url("imagenes/ayuda_selected.png");
 	-fx-border-radius: 9999px;
@@ -17,18 +17,23 @@
 	-fx-border-width: 2px;
 }
 
-#btnWrong {
+.wrong-state {
 	-fx-background-size: 100% 100%;
 	-fx-background-color: rgb(255, 95, 95);
 }
-#btnRight {
+.right-state {
 	-fx-background-size: 100% 100%;
 	-fx-background-color: rgb(160, 255, 120);
 }
-#btnReiniciar {
+#resetButton {
 	-fx-background-size: 100% 100%;
 	-fx-background-color: rgb(150, 150, 150);
 	-fx-background-image: url("imagenes/reiniciar.png");
+	-fx-cursor: pointer;
+}
+#resetButton:hover {
+	-fx-background-color: rgb(85, 208, 253);
+	-fx-background-image: url("imagenes/reiniciar_selected.png");
 }
 
 #background {
@@ -65,14 +70,20 @@
 	-fx-border-style: solid inside;
 	-fx-border-color: black;
 	-fx-alignment: center;
-	-fx-pref-height: 12; /* Opcional si no lo haces en código */
+	-fx-pref-height: 10;
 }
 
 .title-label {
-	-fx-text-fill: white;
+	-fx-text-fill: rgb(255, 255, 255);
 	-fx-font-family: "Consolas";
 	-fx-font-weight: bold;
 	-fx-font-size: 10;
+}
+
+.title-file {
+	-fx-text-fill: rgb(0, 0, 0);
+	-fx-font-family: "Consolas";
+	-fx-font-size: 8;
 }
 
 .tree-node {
