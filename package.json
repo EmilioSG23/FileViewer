@@ -4,7 +4,7 @@
 	"description": "File Viewer",
 	"scripts": {
 		"start": "mvnw.cmd javafx:run",
-		"build": "mvnw.cmd clean package",
+		"build": "mvnw.cmd clean package && build.bat",
 		"test": "mvnw.cmd test"
 	},
 	"engines": {
