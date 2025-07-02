@@ -138,22 +138,22 @@
                       <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
                     </rowConstraints>
                      <children>
-                        <Button mnemonicParsing="false" onAction="#decrementLevel" prefHeight="23.0" prefWidth="10.0" text="&lt;" GridPane.columnIndex="1">
+                        <Button fx:id="decrementLevelButton" mnemonicParsing="false" onAction="#decrementLevel" prefHeight="23.0" prefWidth="10.0" text="&lt;" GridPane.columnIndex="1">
                            <font>
                               <Font name="Consolas" size="10.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#decrementLevelTitle" prefHeight="23.0" prefWidth="10.0" text="&lt;" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                        <Button fx:id="decrementLevelTitleButton" mnemonicParsing="false" onAction="#decrementLevelTitle" prefHeight="23.0" prefWidth="10.0" text="&lt;" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
                               <Font name="Consolas" size="10.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#incrementLevel" prefHeight="23.0" prefWidth="10.0" text="&gt;" GridPane.columnIndex="3">
+                        <Button fx:id="incrementLevelButton" mnemonicParsing="false" onAction="#incrementLevel" prefHeight="23.0" prefWidth="10.0" text="&gt;" GridPane.columnIndex="3">
                            <font>
                               <Font name="Consolas" size="10.0" />
                            </font>
                         </Button>
-                        <Button mnemonicParsing="false" onAction="#incrementLevelTitle" prefHeight="23.0" prefWidth="10.0" text="&gt;" GridPane.columnIndex="3" GridPane.rowIndex="1">
+                        <Button fx:id="incrementLevelTitleButton" mnemonicParsing="false" onAction="#incrementLevelTitle" prefHeight="23.0" prefWidth="10.0" text="&gt;" GridPane.columnIndex="3" GridPane.rowIndex="1">
                            <font>
                               <Font name="Consolas" size="10.0" />
                            </font>

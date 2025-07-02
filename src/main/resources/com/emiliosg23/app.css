@@ -51,7 +51,7 @@
 
 #directoryImg {
 	-fx-background-size: 100% 100%;
-	-fx-background-image: url("imagenes/carpeta.png");
+	-fx-background-image: url("imagenes/carpeta_dark.png");
 }
 #panelBackground {
 	-fx-background-size: 100% 100%;

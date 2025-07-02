@@ -8,6 +8,10 @@ import javafx.stage.Stage;
 
 import java.io.IOException;
 
+import com.emiliosg23.utils.Consts;
+
+import javafx.scene.image.Image;
+
 /**
  * JavaFX App
  */
@@ -29,6 +33,8 @@ public class App extends Application {
         scene = new Scene(loadFXML("app"), 1360, 768);
         stage.setScene(scene);
 				stage.setMaximized(true);
+				stage.setTitle(Consts.PROGRAM_NAME);
+				stage.getIcons().add(new Image(App.class.getResource("imagenes/fileviewer.png").toString()));
         stage.show();
         App.stage=stage;
     }

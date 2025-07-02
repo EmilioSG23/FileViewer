@@ -1,14 +1,16 @@
 package com.emiliosg23.models;
 
-public class RenderConfiguration {
-	private final int MAX_NUM_LEVEL_LIMIT = 10;
-	private final int MAX_NUM_TITLE_LEVEL_LIMIT = 3;
+import com.emiliosg23.utils.Consts;
 
-	private int limitLevel = 8;
-	private int limitLevelTitle = 2;
-	private boolean showFilenames = true;
-	private boolean verticalStart = false;
-	private boolean executableMode = false;
+public class RenderConfiguration {
+	private final int MAX_NUM_LEVEL_LIMIT = Consts.MAX_NUM_LEVEL_LIMIT;
+	private final int MAX_NUM_TITLE_LEVEL_LIMIT = Consts.MAX_NUM_TITLE_LEVEL_LIMIT;
+
+	private int limitLevel = Consts.DEFAULT_LIMIT_LEVEL;
+	private int limitLevelTitle = Consts.DEFAULT_LIMIT_LEVEL_TITLE;
+	private boolean showFilenames = Consts.DEFAULT_SHOW_FILENAMES;
+	private boolean verticalStart = Consts.DEFAULT_VERTICAL_START;
+	private boolean executableMode = Consts.DEFAULT_EXECUTABLE_MODE;
 
 	public RenderConfiguration() {}
 	public RenderConfiguration(int limitLevel, int limitLevelTitle, boolean showFilenames, boolean verticalStart, boolean executableMode){
@@ -73,11 +75,11 @@ public class RenderConfiguration {
 	}
 
 	public void reset() {
-		limitLevel = 8;
-		limitLevelTitle = 2;
-		showFilenames = true;
-		verticalStart = false;
-		executableMode = false;
+		limitLevel = Consts.DEFAULT_LIMIT_LEVEL;
+		limitLevelTitle = Consts.DEFAULT_LIMIT_LEVEL_TITLE;
+		showFilenames = Consts.DEFAULT_SHOW_FILENAMES;
+		verticalStart = Consts.DEFAULT_VERTICAL_START;
+		executableMode = Consts.DEFAULT_EXECUTABLE_MODE;
 	}
 
 	public RenderConfiguration createChildConfiguration() {

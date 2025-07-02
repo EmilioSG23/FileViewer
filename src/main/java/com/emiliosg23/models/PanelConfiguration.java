@@ -1,6 +1,7 @@
 package com.emiliosg23.models;
 
 import com.emiliosg23.models.enums.Modes;
+import com.emiliosg23.utils.Consts;
 
 public class PanelConfiguration {
 	private String directory;
@@ -11,16 +12,16 @@ public class PanelConfiguration {
 	private final RenderConfiguration renderConfiguration;
 
 	public PanelConfiguration() {
-		this.directory = "";
-		this.fileExtensionMode = false;
-		this.acumulativeMode = false;
+		this.directory = Consts.DEFAULT_DIRECTORY;
+		this.fileExtensionMode = Consts.DEFAULT_FILE_EXTENSION_MODE;
+		this.acumulativeMode = Consts.DEFAULT_ACUMULATIVE_MODE;
 		this.renderConfiguration = new RenderConfiguration();
 	}
 
 	public void reset() {
-		this.directory = "";
-		this.fileExtensionMode = false;
-		this.acumulativeMode = false;
+		this.directory = Consts.DEFAULT_DIRECTORY;
+		this.fileExtensionMode = Consts.DEFAULT_FILE_EXTENSION_MODE;
+		this.acumulativeMode = Consts.DEFAULT_ACUMULATIVE_MODE;
 		this.renderConfiguration.reset();
 	}
 

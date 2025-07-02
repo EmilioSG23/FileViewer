@@ -16,6 +16,10 @@
 	-fx-text-fill: #f8f8f2 !important;
 }
 
+#directoryImg {
+	-fx-background-image: url("../imagenes/carpeta_light.png") !important;
+}
+
 #panelBackground {
 	-fx-background-color: #1b1c17 !important;
 }

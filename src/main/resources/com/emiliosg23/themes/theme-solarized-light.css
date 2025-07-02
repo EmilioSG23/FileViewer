@@ -15,6 +15,10 @@
 	-fx-text-fill: #657b83 !important;
 }
 
+#directoryImg {
+	-fx-background-image: url("../imagenes/carpeta_dark.png") !important;
+}
+
 #panelBackground {
 	-fx-background-color: #fdf6e3 !important;
 }

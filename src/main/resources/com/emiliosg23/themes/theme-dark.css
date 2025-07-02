@@ -10,6 +10,10 @@
 	-fx-text-fill: white;
 }
 
+#directoryImg {
+	-fx-background-image: url("../imagenes/carpeta_light.png") !important;
+}
+
 #viewerBackground {
 	-fx-background-color: #2a2a2a !important;
 	-fx-text-fill: white !important;
