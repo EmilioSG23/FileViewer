@@ -1,5 +1,10 @@
-package com.emiliosg23.models.tdas.lists.dcll;
+package com.emiliosg23.tdas.lists.dcll;
 
+/**
+ * Nodo de una lista doblemente enlazada circular.
+ *
+ * @param <E> tipo del contenido
+ */
 public class DoublyCircularLinkedNodeList<E> {
     private E content;
     private DoublyCircularLinkedNodeList<E> next;

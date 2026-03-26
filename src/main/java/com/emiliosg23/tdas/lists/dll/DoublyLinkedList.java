@@ -1,10 +1,15 @@
-package com.emiliosg23.models.tdas.lists.dll;
+package com.emiliosg23.tdas.lists.dll;
 
 import java.util.Comparator;
 import java.util.Iterator;
 
-import com.emiliosg23.models.tdas.lists.List;
+import com.emiliosg23.tdas.lists.List;
 
+/**
+ * Implementacion de {@link com.emiliosg23.tdas.lists.List} con nodos doblemente enlazados.
+ *
+ * @param <E> tipo de los elementos
+ */
 public class DoublyLinkedList<E> implements List<E>{
     private DoublyLinkedNodeList<E> header;
     private DoublyLinkedNodeList<E> last;

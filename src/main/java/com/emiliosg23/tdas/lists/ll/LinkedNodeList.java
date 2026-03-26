@@ -1,7 +1,12 @@
-package com.emiliosg23.models.tdas.lists.ll;
+package com.emiliosg23.tdas.lists.ll;
 
 import java.io.Serializable;
 
+/**
+ * Nodo de una lista simplemente enlazada.
+ *
+ * @param <E> tipo del contenido
+ */
 public class LinkedNodeList<E> implements Serializable{
     private E content;
     private LinkedNodeList<E> next;

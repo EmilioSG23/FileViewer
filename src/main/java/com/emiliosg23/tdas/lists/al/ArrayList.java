@@ -1,11 +1,16 @@
 
-package com.emiliosg23.models.tdas.lists.al;
+package com.emiliosg23.tdas.lists.al;
 
 import java.util.Comparator;
 import java.util.Iterator;
 
-import com.emiliosg23.models.tdas.lists.List;
+import com.emiliosg23.tdas.lists.List;
 
+/**
+ * Implementacion de {@link com.emiliosg23.tdas.lists.List} basada en arreglo dinamico.
+ *
+ * @param <E> tipo de los elementos
+ */
 public class ArrayList<E> implements List<E>{
     private int capacity=100;
     private E[] elements;

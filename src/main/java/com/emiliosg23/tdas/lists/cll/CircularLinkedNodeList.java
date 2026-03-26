@@ -1,5 +1,10 @@
-package com.emiliosg23.models.tdas.lists.cll;
+package com.emiliosg23.tdas.lists.cll;
 
+/**
+ * Nodo de una lista circular simplemente enlazada.
+ *
+ * @param <E> tipo del contenido
+ */
 public class CircularLinkedNodeList<E> {
     private E content;
     private CircularLinkedNodeList<E> next;

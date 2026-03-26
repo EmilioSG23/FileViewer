@@ -1,5 +1,10 @@
-package com.emiliosg23.models.tdas.lists.dll;
+package com.emiliosg23.tdas.lists.dll;
 
+/**
+ * Nodo de una lista doblemente enlazada.
+ *
+ * @param <E> tipo del contenido
+ */
 public class DoublyLinkedNodeList<E> {
     private E content;
     private DoublyLinkedNodeList<E> previous;

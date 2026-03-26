@@ -1,3 +1,10 @@
+/**
+ * Modulo principal de FileViewer.
+ *
+ * <p>Aplicacion JavaFX para visualizar la estructura de directorios como treemaps
+ * interactivos, con modos de agrupacion por extension, vista acumulativa y apertura
+ * de archivos.</p>
+ */
 module com.emiliosg23 {
     requires javafx.controls;
     requires javafx.fxml;

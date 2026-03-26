@@ -1,11 +1,17 @@
-package com.emiliosg23.models.tdas.lists;
+package com.emiliosg23.tdas.lists;
 
-import com.emiliosg23.models.tdas.lists.al.ArrayList;
-import com.emiliosg23.models.tdas.lists.dcll.DoublyCircularLinkedList;
-import com.emiliosg23.models.tdas.lists.dll.DoublyLinkedList;
-import com.emiliosg23.models.tdas.lists.ll.LinkedList;
+import com.emiliosg23.tdas.lists.al.ArrayList;
+import com.emiliosg23.tdas.lists.dcll.DoublyCircularLinkedList;
+import com.emiliosg23.tdas.lists.dll.DoublyLinkedList;
+import com.emiliosg23.tdas.lists.ll.LinkedList;
 
+/**
+ * Utilidad para convertir entre implementaciones de {@link List}.
+ *
+ * @param <E> tipo de los elementos
+ */
 public class ListConvertors<E> {
+
     public static <E> DoublyCircularLinkedList<E> toDCLL(List<E> list) {
         return convert(list, new DoublyCircularLinkedList<>());
     }
@@ -22,8 +28,8 @@ public class ListConvertors<E> {
         return convert(list, new ArrayList<>());
     }
 
-		private static <E, T extends List<E>> T convert(List<E> from, T to){
-			to.addAll(from);
-			return to;
-		}
+    private static <E, T extends List<E>> T convert(List<E> from, T to) {
+        to.addAll(from);
+        return to;
+    }
 }

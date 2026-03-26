@@ -1,10 +1,15 @@
-package com.emiliosg23.models.tdas.lists.ll;
+package com.emiliosg23.tdas.lists.ll;
 
 import java.util.Comparator;
 import java.util.Iterator;
 
-import com.emiliosg23.models.tdas.lists.List;
+import com.emiliosg23.tdas.lists.List;
 
+/**
+ * Implementacion de {@link com.emiliosg23.tdas.lists.List} con nodos simplemente enlazados.
+ *
+ * @param <E> tipo de los elementos
+ */
 public class LinkedList<E> implements List<E>{
 
     private LinkedNodeList<E> first;
