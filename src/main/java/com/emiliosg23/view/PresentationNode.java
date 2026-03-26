@@ -1,7 +1,10 @@
 package com.emiliosg23.view;
 
-import com.emiliosg23.models.infos.Info;
+import com.emiliosg23.domain.model.Info;
 import com.emiliosg23.utils.AppUtils;
+import com.emiliosg23.view.nodes.DirectoryPresentationNode;
+import com.emiliosg23.view.nodes.ExtensionPresentationNode;
+import com.emiliosg23.view.nodes.FilePresentationNode;
 
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;

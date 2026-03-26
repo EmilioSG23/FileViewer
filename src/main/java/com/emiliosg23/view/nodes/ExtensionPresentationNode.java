@@ -1,7 +1,8 @@
-package com.emiliosg23.view;
+package com.emiliosg23.view.nodes;
 
-import com.emiliosg23.models.infos.ExtensionInfo;
+import com.emiliosg23.domain.model.ExtensionInfo;
 import com.emiliosg23.utils.FileExtensionUtils;
+import com.emiliosg23.view.PresentationNode;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;

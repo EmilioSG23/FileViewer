@@ -49,22 +49,6 @@ public final class Consts {
      */
     public static final boolean DEFAULT_VERTICAL_START = false;
 
-    // --- Modos ---
-    /**
-     * Estado inicial del modo de extensión de archivo.
-     */
-    public static final boolean DEFAULT_FILE_EXTENSION_MODE = false;
-
-    /**
-     * Estado inicial del modo acumulativo.
-     */
-    public static final boolean DEFAULT_ACUMULATIVE_MODE = false;
-
-    /**
-     * Estado inicial del modo ejecutable.
-     */
-    public static final boolean DEFAULT_EXECUTABLE_MODE = false;
-
     /**
      * Directorio seleccionado por defecto (vacío = ninguno).
      */

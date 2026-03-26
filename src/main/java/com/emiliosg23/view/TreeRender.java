@@ -1,11 +1,15 @@
 package com.emiliosg23.view;
 
-import com.emiliosg23.models.RenderConfiguration;
-import com.emiliosg23.models.infos.DirectoryInfo;
-import com.emiliosg23.models.infos.ExtensionInfo;
-import com.emiliosg23.models.infos.FileInfo;
-import com.emiliosg23.models.infos.Info;
+import com.emiliosg23.application.RenderConfiguration;
+import com.emiliosg23.domain.interaction.InteractionOptions;
+import com.emiliosg23.domain.model.DirectoryInfo;
+import com.emiliosg23.domain.model.ExtensionInfo;
+import com.emiliosg23.domain.model.FileInfo;
+import com.emiliosg23.domain.model.Info;
 import com.emiliosg23.tdas.trees.MultiTree;
+import com.emiliosg23.view.nodes.DirectoryPresentationNode;
+import com.emiliosg23.view.nodes.ExtensionPresentationNode;
+import com.emiliosg23.view.nodes.FilePresentationNode;
 
 import javafx.scene.layout.Pane;
 
@@ -17,34 +21,29 @@ import javafx.scene.layout.Pane;
  * (fase de inicialización) y luego inserta los nodos JavaFX en el panel visual
  * (fase de renderizado). Ambas fases deben ejecutarse en el hilo de JavaFX.</p>
  *
- * <h3>Flujo:</h3>
+ * <h3>Flujo de uso:</h3>
  * <ol>
- * <li>{@link #setTree(MultiTree)} y
- * {@link #setConfig(RenderConfiguration)}</li>
- * <li>{@link #initialize(Pane)} — crea los nodos de presentación con sus
- * dimensiones</li>
+ * <li>{@link #setTree(MultiTree)}, {@link #setConfig(RenderConfiguration)} y
+ * {@link #setInteractionOptions(InteractionOptions)}</li>
+ * <li>{@link #initialize(Pane)} — crea los nodos de presentación</li>
  * <li>{@link #render(MultiTree, Pane)} — inserta los nodos en el scene
  * graph</li>
  * </ol>
  *
+ * <p>
+ * Las opciones de interacción ({@link InteractionOptions}) controlan qué ocurre
+ * al hacer clic en un nodo archivo; el render no necesita conocer los detalles
+ * de la política concreta.</p>
+ *
  * @see PresentationNode
  * @see RenderConfiguration
+ * @see InteractionOptions
  */
 public class TreeRender {
 
     private MultiTree<Info> tree;
     private RenderConfiguration config;
-
-    /**
-     * Crea un renderizador con árbol y configuración iniciales.
-     *
-     * @param tree árbol de información a visualizar
-     * @param config configuración de renderizado
-     */
-    public TreeRender(MultiTree<Info> tree, RenderConfiguration config) {
-        this.tree = tree;
-        this.config = config;
-    }
+    private InteractionOptions interactionOptions = InteractionOptions.none();
 
     /**
      * Crea un renderizador vacío. Debe configurarse con setters antes de usar.
@@ -52,18 +51,25 @@ public class TreeRender {
     public TreeRender() {
     }
 
-    /**
-     * @param tree árbol de información a renderizar
-     */
     public void setTree(MultiTree<Info> tree) {
         this.tree = tree;
     }
 
-    /**
-     * @param config configuración de renderizado
-     */
     public void setConfig(RenderConfiguration config) {
         this.config = config;
+    }
+
+    /**
+     * Establece las opciones de interacción que se propagarán a los nodos de
+     * archivo durante la inicialización.
+     *
+     * @param interactionOptions opciones de interacción; {@code null} se trata
+     * como {@link InteractionOptions#none()}
+     */
+    public void setInteractionOptions(InteractionOptions interactionOptions) {
+        this.interactionOptions = interactionOptions != null
+                ? interactionOptions
+                : InteractionOptions.none();
     }
 
     /**
@@ -87,50 +93,42 @@ public class TreeRender {
      * @param paneRoot panel donde se insertan los nodos
      */
     public void render(MultiTree<PresentationNode> presentationTree, Pane paneRoot) {
-        PresentationNode presentationNode = presentationTree.getRoot().getContent();
-        paneRoot.getChildren().add(presentationNode.getTreePane());
+        PresentationNode node = presentationTree.getRoot().getContent();
+        paneRoot.getChildren().add(node.getTreePane());
 
-        if (presentationNode instanceof DirectoryPresentationNode) {
-            DirectoryPresentationNode directoryNode = (DirectoryPresentationNode) presentationNode;
-            Pane childTreePane = directoryNode.getChildTreePane();
-
+        if (node instanceof DirectoryPresentationNode dirNode) {
+            Pane childPane = dirNode.getChildTreePane();
             for (MultiTree<PresentationNode> subtree : presentationTree.getRoot().getChildren()) {
-                render(subtree, childTreePane);
+                render(subtree, childPane);
             }
         }
     }
 
-    /**
-     * Crea recursivamente nodos de presentación para cada nivel del árbol,
-     * respetando el límite de profundidad configurado.
-     *
-     * @param tree subárbol actual
-     * @param paneRoot contenedor padre para calcular proporciones
-     * @param sizeParent tamaño del padre para calcular el porcentaje relativo
-     * @param config configuración de renderizado (con nivel decrementado)
-     * @return subárbol de presentación, o {@code null} si se excede la
-     * profundidad
-     */
-    private MultiTree<PresentationNode> initializeRecursive(MultiTree<Info> tree, Pane paneRoot, long sizeParent, RenderConfiguration config) {
+    // -------------------------------------------------------------------------
+    // Inicialización recursiva
+    // -------------------------------------------------------------------------
+    private MultiTree<PresentationNode> initializeRecursive(
+            MultiTree<Info> tree, Pane paneRoot, long sizeParent, RenderConfiguration config) {
+
         if (config.getLimitLevel() < 0) {
             return null;
         }
 
         Info info = tree.getRoot().getContent();
-        PresentationNode presentationInfoNode = createPresentationNode(info, config);
-        presentationInfoNode.initializeNode(sizeParent, paneRoot, config.isVerticalStart());
-        presentationInfoNode.createNode(true);
+        PresentationNode presentationNode = createPresentationNode(info, config);
+        presentationNode.initializeNode(sizeParent, paneRoot, config.isVerticalStart());
+        presentationNode.createNode(true);
 
-        MultiTree<PresentationNode> presentationTree = new MultiTree<>(presentationInfoNode);
+        MultiTree<PresentationNode> presentationTree = new MultiTree<>(presentationNode);
 
-        if (info instanceof DirectoryInfo && config.getLimitLevel() > 0) {
-            DirectoryInfo directoryInfo = (DirectoryInfo) info;
-            DirectoryPresentationNode directoryNode = (DirectoryPresentationNode) presentationInfoNode;
-            Pane childTreePane = directoryNode.getChildTreePane();
+        if (info instanceof DirectoryInfo directoryInfo && config.getLimitLevel() > 0) {
+            DirectoryPresentationNode dirNode = (DirectoryPresentationNode) presentationNode;
+            Pane childPane = dirNode.getChildTreePane();
             RenderConfiguration childConfig = config.createChildConfiguration();
 
             for (MultiTree<Info> subtree : tree.getRoot().getChildren()) {
-                MultiTree<PresentationNode> childTree = initializeRecursive(subtree, childTreePane, directoryInfo.getSize(), childConfig);
+                MultiTree<PresentationNode> childTree = initializeRecursive(
+                        subtree, childPane, directoryInfo.getSize(), childConfig);
                 if (childTree != null) {
                     presentationTree.addChild(childTree);
                 }
@@ -139,24 +137,18 @@ public class TreeRender {
         return presentationTree;
     }
 
-    /**
-     * Crea la instancia de {@link PresentationNode} adecuada según el tipo de
-     * {@link Info}.
-     *
-     * @param info información del nodo
-     * @param config configuración de renderizado actual
-     * @return nodo de presentación específico
-     * @throws IllegalArgumentException si el tipo de info no es soportado
-     */
     private PresentationNode createPresentationNode(Info info, RenderConfiguration config) {
-        if (info instanceof DirectoryInfo) {
-            return new DirectoryPresentationNode((DirectoryInfo) info, config.getLimitLevelTitle() > 0, config.getLimitLevel() == 0); 
-        }else if (info instanceof FileInfo) {
-            return new FilePresentationNode((FileInfo) info, config.isShowFilenames(), config.isExecutableMode()); 
-        }else if (info instanceof ExtensionInfo) {
-            return new ExtensionPresentationNode((ExtensionInfo) info); 
-        }else {
-            throw new IllegalArgumentException("Info must be either DirectoryInfo or FileInfo");
+        if (info instanceof DirectoryInfo dirInfo) {
+            return new DirectoryPresentationNode(
+                    dirInfo, config.getLimitLevelTitle() > 0, config.getLimitLevel() == 0);
         }
+        if (info instanceof FileInfo fileInfo) {
+            return new FilePresentationNode(
+                    fileInfo, config.isShowFilenames(), interactionOptions.getPolicy());
+        }
+        if (info instanceof ExtensionInfo extInfo) {
+            return new ExtensionPresentationNode(extInfo);
+        }
+        throw new IllegalArgumentException("Unknown Info subtype: " + info.getClass().getSimpleName());
     }
 }

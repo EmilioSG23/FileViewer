@@ -3,12 +3,13 @@ package com.emiliosg23.controllers;
 import java.io.File;
 import java.io.IOException;
 import java.util.function.Supplier;
-import java.util.prefs.Preferences;
 
 import com.emiliosg23.App;
-import com.emiliosg23.models.AppService;
-import com.emiliosg23.models.enums.Modes;
-import com.emiliosg23.models.infos.Info;
+import com.emiliosg23.application.AppService;
+import com.emiliosg23.domain.model.Info;
+import com.emiliosg23.domain.pipeline.AccumulatedTransformation;
+import com.emiliosg23.domain.pipeline.FileExtensionTransformation;
+import com.emiliosg23.infrastructure.preferences.ThemePreferences;
 import com.emiliosg23.tdas.trees.MultiTree;
 import com.emiliosg23.utils.AppUtils;
 import com.emiliosg23.utils.Consts;
@@ -36,16 +37,24 @@ import javafx.stage.Stage;
  * Controlador principal de la interfaz de usuario.
  *
  * <p>
- * Gestiona los eventos de la vista FXML ({@code app.fxml}): selección de
- * directorio, alternancia de modos, ajuste de niveles de profundidad, cambio de
- * tema y renderizado del treemap. El escaneo de directorios se ejecuta en un
- * hilo de fondo para no bloquear la interfaz gráfica.</p>
+ * Adaptador FXML: lee eventos del usuario, delega toda la lógica a
+ * {@link AppService} y actualiza los widgets. El escaneo de directorios se
+ * ejecuta en un hilo de fondo mediante {@link Task}.</p>
+ *
+ * <p>
+ * Las operaciones de dominio (transformaciones, interacción) se identifican con
+ * las constantes estáticas de las clases de transformación, eliminando el uso
+ * del antiguo enum {@code Modes}.</p>
  *
  * @see AppService
  * @see TreeRender
+ * @see ThemePreferences
  */
 public class AppController {
 
+    // -------------------------------------------------------------------------
+    // FXML fields
+    // -------------------------------------------------------------------------
     @FXML
     private TextField directoryTextField;
     @FXML
@@ -77,55 +86,57 @@ public class AppController {
     @FXML
     private ComboBox<ThemeStyle> themeComboBox;
 
+    // -------------------------------------------------------------------------
+    // Instance state
+    // -------------------------------------------------------------------------
+    private final ThemePreferences themePreferences = new ThemePreferences(AppController.class);
+    private ThemeStyle currentTheme;
+
     private AppService service;
     private TreeRender render;
-    private ThemeStyle currentTheme = ThemeStyle.LIGHT;
 
+    // -------------------------------------------------------------------------
+    // Initialization
+    // -------------------------------------------------------------------------
     public void initialize() {
-        Preferences prefs = Preferences.userNodeForPackage(AppController.class);
-        String savedTheme = prefs.get("theme", ThemeStyle.DARK.name()); // Valor por defecto
-        currentTheme = ThemeStyle.valueOf(savedTheme);
-
+        // --- Tema ---
+        currentTheme = themePreferences.load();
         themeComboBox.getItems().setAll(ThemeStyle.values());
         themeComboBox.setValue(currentTheme);
+        applyTheme(currentTheme);
 
-        Scene scene = themeComboBox.getScene();
-        if (scene != null) {
-            scene.getStylesheets().clear();
-            scene.getStylesheets().add(currentTheme.getPath());
-        } else {
-            themeComboBox.sceneProperty().addListener((obs, oldScene, newScene) -> {
-                if (newScene != null) {
-                    newScene.getStylesheets().clear();
-                    //newScene.getStylesheets().add(getClass().getResource("/app.css").toExternalForm());
-                    newScene.getStylesheets().add(currentTheme.getPath());
-                }
-            });
-        }
-
-        // Clipping (recorte) para treeMapPanel
+        // --- Clip del panel de treemap ---
         Rectangle clip = new Rectangle();
         treeMapPanel.setClip(clip);
-
-        // Actualizar el tamaño del clip dinámicamente cuando el tamaño del panel cambie
         treeMapPanel.layoutBoundsProperty().addListener((obs, oldVal, newVal) -> {
             clip.setWidth(newVal.getWidth());
             clip.setHeight(newVal.getHeight());
         });
 
+        // --- Servicio y render ---
         this.service = new AppService();
         this.render = new TreeRender();
-        //treeMapPanel.prefHeightProperty().bind(background.heightProperty().subtract(192));
-        AppUtils.changeButtonState(showFileOrExtensionButton, service.getPanelConfiguration().isFileExtensionMode());
-        AppUtils.changeButtonState(acumulativeButton, service.getPanelConfiguration().isAcumulativeMode());
-        AppUtils.changeButtonState(executableButton, service.getPanelConfiguration().isExecutableMode());
-        AppUtils.changeButtonState(showFilenamesButton, service.getRenderConfiguration().isShowFilenames());
 
-        directoryTextField.setText(service.getPanelConfiguration().getDirectory());
+        // --- Estado inicial de controles ---
+        AppUtils.changeButtonState(showFileOrExtensionButton,
+                service.isTransformationActive(FileExtensionTransformation.ID));
+        AppUtils.changeButtonState(acumulativeButton,
+                service.isTransformationActive(AccumulatedTransformation.ID));
+        AppUtils.changeButtonState(executableButton, service.isExecutableMode());
+        AppUtils.changeButtonState(showFilenamesButton,
+                service.getRenderConfiguration().isShowFilenames());
+
+        acumulativeButton.setDisable(
+                !service.isTransformationActive(FileExtensionTransformation.ID));
+
+        directoryTextField.setText(service.getDirectory());
         levelLabel.setText(Integer.toString(service.getRenderConfiguration().getLimitLevel()));
         titleLevelLabel.setText(Integer.toString(service.getRenderConfiguration().getLimitLevelTitle()));
     }
 
+    // -------------------------------------------------------------------------
+    // Selección de directorio
+    // -------------------------------------------------------------------------
     @FXML
     private void selectDirectory(ActionEvent event) {
         DirectoryChooser selector = new DirectoryChooser();
@@ -135,8 +146,6 @@ public class AppController {
         File initialDir = new File(path);
         if (initialDir.exists() && initialDir.isDirectory()) {
             selector.setInitialDirectory(initialDir);
-        } else {
-            selector.setInitialDirectory(null);
         }
 
         File selectedDirectory = selector.showDialog(null);
@@ -153,14 +162,11 @@ public class AppController {
             AppUtils.showErrorAlert("There is not selected directory.");
             return;
         }
-        // Reconfigure panel size
         treeMapPanel.setPrefSize(treeMapPanel.getWidth(), treeMapPanel.getHeight());
 
-        // Show non-blocking loading indicator
         Alert generating = AppUtils.showLoadingAlert("Generating tree...");
         setControlsDisabled(true);
 
-        // Background task: scan directory using parallel ForkJoinPool
         Task<MultiTree<Info>> scanTask = new Task<>() {
             @Override
             protected MultiTree<Info> call() {
@@ -170,15 +176,15 @@ public class AppController {
 
         scanTask.setOnSucceeded(event -> {
             generating.close();
-            MultiTree<Info> directoryTree = scanTask.getValue();
-            processTreeGenerator(directoryTree, treeMapPanel);
+            processTreeGenerator(scanTask.getValue(), treeMapPanel);
             setControlsDisabled(false);
         });
 
         scanTask.setOnFailed(event -> {
             generating.close();
             setControlsDisabled(false);
-            AppUtils.showErrorAlert("Error scanning directory: " + scanTask.getException().getMessage());
+            AppUtils.showErrorAlert("Error scanning directory: "
+                    + scanTask.getException().getMessage());
         });
 
         Thread backgroundThread = new Thread(scanTask);
@@ -186,74 +192,165 @@ public class AppController {
         backgroundThread.start();
     }
 
-    private void processTreeGenerator(MultiTree<Info> tree, HBox panel) {
-        // Config Render Engine
-        render.setTree(tree);
-        render.setConfig(service.getRenderConfiguration());
-        // Init directory tree presentation
-        MultiTree<PresentationNode> presentationTree = render.initialize(panel);
-        // Render directory tree
-        render.render(presentationTree, panel);
-    }
-
-    private void update() {
-        MultiTree<Info> updatedDirectoryTree = service.update();
-        if (updatedDirectoryTree != null) {
-            processTreeGenerator(updatedDirectoryTree, treeMapPanel);
-        }
-    }
-
-    /**
-     * Habilita o deshabilita los controles de la interfaz durante operaciones
-     * de carga.
-     *
-     * @param disabled {@code true} para deshabilitar, {@code false} para
-     * habilitar
-     */
-    private void setControlsDisabled(boolean disabled) {
-        resetButton.setDisable(disabled);
-        showFileOrExtensionButton.setDisable(disabled);
-        executableButton.setDisable(disabled);
-        showFilenamesButton.setDisable(disabled);
-        incrementLevelButton.setDisable(disabled);
-        decrementLevelButton.setDisable(disabled);
-        incrementLevelTitleButton.setDisable(disabled);
-        decrementLevelTitleButton.setDisable(disabled);
-    }
-
+    // -------------------------------------------------------------------------
+    // Reset
+    // -------------------------------------------------------------------------
     @FXML
     private void reset(ActionEvent event) {
         service.reset();
         treeMapPanel.getChildren().clear();
 
-        // Reset buttons
-        AppUtils.changeButtonState(showFileOrExtensionButton, service.getPanelConfiguration().isFileExtensionMode());
-        AppUtils.changeButtonState(acumulativeButton, service.getPanelConfiguration().isAcumulativeMode());
-        AppUtils.changeButtonState(executableButton, service.getPanelConfiguration().isExecutableMode());
-        AppUtils.changeButtonState(showFilenamesButton, service.getRenderConfiguration().isShowFilenames());
+        AppUtils.changeButtonState(showFileOrExtensionButton, false);
+        AppUtils.changeButtonState(acumulativeButton, false);
+        AppUtils.changeButtonState(executableButton, false);
+        AppUtils.changeButtonState(showFilenamesButton,
+                service.getRenderConfiguration().isShowFilenames());
 
         showFileOrExtensionButton.setDisable(false);
         acumulativeButton.setDisable(true);
         showFilenamesButton.setDisable(false);
         executableButton.setDisable(false);
 
-        // Reset panel
-        directoryTextField.setText(service.getPanelConfiguration().getDirectory());
+        directoryTextField.setText(service.getDirectory());
 
-        int currentLevel = service.getRenderConfiguration().getLimitLevel();
-        int currentTitleLevel = service.getRenderConfiguration().getLimitLevelTitle();
+        int level = service.getRenderConfiguration().getLimitLevel();
+        int titleLevel = service.getRenderConfiguration().getLimitLevelTitle();
+        levelLabel.setText(Integer.toString(level));
+        titleLevelLabel.setText(Integer.toString(titleLevel));
 
-        levelLabel.setText(Integer.toString(currentLevel));
-        titleLevelLabel.setText(Integer.toString(currentTitleLevel));
-
-        // Reset level buttons
-        incrementLevelButton.setDisable(currentLevel >= Consts.MAX_NUM_LEVEL_LIMIT);
-        decrementLevelButton.setDisable(currentLevel <= 1);
-
-        incrementLevelTitleButton.setDisable(currentTitleLevel >= Consts.MAX_NUM_TITLE_LEVEL_LIMIT);
-        decrementLevelTitleButton.setDisable(currentTitleLevel <= 1);
+        incrementLevelButton.setDisable(level >= Consts.MAX_NUM_LEVEL_LIMIT);
+        decrementLevelButton.setDisable(level <= 1);
+        incrementLevelTitleButton.setDisable(titleLevel >= Consts.MAX_NUM_TITLE_LEVEL_LIMIT);
+        decrementLevelTitleButton.setDisable(titleLevel <= 1);
     }
 
+    // -------------------------------------------------------------------------
+    // Modos de transformación del árbol
+    // -------------------------------------------------------------------------
+    @FXML
+    private void changeFileExtensionMode(ActionEvent event) {
+        boolean isActive = service.toggleTransformation(FileExtensionTransformation.ID);
+        AppUtils.changeButtonState(showFileOrExtensionButton, isActive);
+        if (!isActive) {
+            // Desactivar FILE_EXTENSION desactiva ACCUMULATED en cascada (pipeline)
+            AppUtils.changeButtonState(acumulativeButton, false);
+        }
+        acumulativeButton.setDisable(!isActive);
+        update();
+    }
+
+    @FXML
+    private void changeAcumulativeMode(ActionEvent event) {
+        boolean isActive = service.toggleTransformation(AccumulatedTransformation.ID);
+        AppUtils.changeButtonState(acumulativeButton, isActive);
+        update();
+    }
+
+    // -------------------------------------------------------------------------
+    // Modo de interacción (ejecutable)
+    // -------------------------------------------------------------------------
+    @FXML
+    private void changeExecutableMode(ActionEvent event) {
+        boolean isActive = service.toggleExecutableMode();
+        AppUtils.changeButtonState(executableButton, isActive);
+
+        if (isActive) {
+            // Modo ejecutable: las transformaciones de árbol no aplican
+            service.disableTransformation(FileExtensionTransformation.ID);
+            AppUtils.changeButtonState(showFileOrExtensionButton, false);
+            AppUtils.changeButtonState(acumulativeButton, false);
+            showFileOrExtensionButton.setDisable(true);
+            acumulativeButton.setDisable(true);
+        } else {
+            showFileOrExtensionButton.setDisable(false);
+            acumulativeButton.setDisable(
+                    !service.isTransformationActive(FileExtensionTransformation.ID));
+        }
+        update();
+    }
+
+    // -------------------------------------------------------------------------
+    // Opciones de render
+    // -------------------------------------------------------------------------
+    @FXML
+    private void showFilenames(ActionEvent event) {
+        boolean showFilenames = service.showFilenames();
+        AppUtils.changeButtonState(showFilenamesButton, showFilenames);
+        update();
+    }
+
+    @FXML
+    private void incrementLevel(ActionEvent event) {
+        handleLevelChange(() -> service.incrementLevel(),
+                levelLabel, incrementLevelButton, decrementLevelButton,
+                1, Consts.MAX_NUM_LEVEL_LIMIT);
+    }
+
+    @FXML
+    private void decrementLevel(ActionEvent event) {
+        handleLevelChange(() -> service.decrementLevel(),
+                levelLabel, incrementLevelButton, decrementLevelButton,
+                1, Consts.MAX_NUM_LEVEL_LIMIT);
+    }
+
+    @FXML
+    private void incrementLevelTitle(ActionEvent event) {
+        handleLevelChange(() -> service.incrementLevelTitle(),
+                titleLevelLabel, incrementLevelTitleButton, decrementLevelTitleButton,
+                1, Consts.MAX_NUM_TITLE_LEVEL_LIMIT);
+    }
+
+    @FXML
+    private void decrementLevelTitle(ActionEvent event) {
+        handleLevelChange(() -> service.decrementLevelTitle(),
+                titleLevelLabel, incrementLevelTitleButton, decrementLevelTitleButton,
+                1, Consts.MAX_NUM_TITLE_LEVEL_LIMIT);
+    }
+
+    private void handleLevelChange(Supplier<Integer> levelSupplier, Label label,
+            Button incrementBtn, Button decrementBtn,
+            int min, int max) {
+        int level = levelSupplier.get();
+        int current = Integer.parseInt(label.getText());
+        if (current != level) {
+            update();
+            label.setText(Integer.toString(level));
+        }
+        incrementBtn.setDisable(level >= max);
+        decrementBtn.setDisable(level <= min);
+    }
+
+    // -------------------------------------------------------------------------
+    // Tema
+    // -------------------------------------------------------------------------
+    @FXML
+    private void changeTheme(ActionEvent event) {
+        ThemeStyle selected = themeComboBox.getValue();
+        if (selected != null && selected != currentTheme) {
+            currentTheme = selected;
+            themePreferences.save(currentTheme);
+            applyTheme(currentTheme);
+        }
+    }
+
+    private void applyTheme(ThemeStyle theme) {
+        Scene scene = themeComboBox != null ? themeComboBox.getScene() : null;
+        if (scene != null) {
+            scene.getStylesheets().clear();
+            scene.getStylesheets().add(theme.getPath());
+        } else if (themeComboBox != null) {
+            themeComboBox.sceneProperty().addListener((obs, oldScene, newScene) -> {
+                if (newScene != null) {
+                    newScene.getStylesheets().clear();
+                    newScene.getStylesheets().add(theme.getPath());
+                }
+            });
+        }
+    }
+
+    // -------------------------------------------------------------------------
+    // Ayuda
+    // -------------------------------------------------------------------------
     @FXML
     private void help(ActionEvent event) throws IOException {
         Scene secondScene = new Scene(App.loadFXML("ayuda"), 450, 600);
@@ -263,140 +360,35 @@ public class AppController {
         newWindow.initModality(Modality.WINDOW_MODAL);
         newWindow.initOwner(App.getStage());
         newWindow.centerOnScreen();
-
         newWindow.show();
     }
 
-    private boolean toggleMode(Button button, Modes mode) {
-        boolean isActive = service.toggleMode(mode);
-        AppUtils.changeButtonState(button, isActive);
-        return isActive;
-    }
-
-    private boolean changeMode(Button button, Modes mode, boolean enable) {
-        service.changeMode(mode, enable);
-        AppUtils.changeButtonState(button, enable);
-        return enable;
-    }
-
-    @FXML
-    private void changeFileExtensionMode(ActionEvent event) {
-        boolean isActive = toggleMode(showFileOrExtensionButton, Modes.FILE_EXTENSION);
-        acumulativeButton.setDisable(!isActive);
-        changeMode(acumulativeButton, Modes.ACUMULATIVE, false);
-        update();
-    }
-
-    @FXML
-    private void changeExecutableMode(ActionEvent event) {
-        boolean isActive = toggleMode(executableButton, Modes.EXECUTABLE);
-
-        showFileOrExtensionButton.setDisable(isActive);
-        acumulativeButton.setDisable(true);
-        changeMode(showFileOrExtensionButton, Modes.FILE_EXTENSION, false);
-        changeMode(acumulativeButton, Modes.ACUMULATIVE, false);
-        update();
-    }
-
-    @FXML
-    private void changeAcumulativeMode(ActionEvent event) {
-        toggleMode(acumulativeButton, Modes.ACUMULATIVE);
-        update();
-    }
-
-    @FXML
-    private void showFilenames(ActionEvent event) {
-        boolean showFilenames = service.showFilenames();
-        update();
-        AppUtils.changeButtonState(showFilenamesButton, showFilenames);
-    }
-
-    private void updateLevel(Label field, int level) {
-        int currentLevel = Integer.parseInt(field.getText());
-        if (currentLevel == level) {
-            return;
+    // -------------------------------------------------------------------------
+    // Helpers internos
+    // -------------------------------------------------------------------------
+    private void update() {
+        MultiTree<Info> updatedTree = service.update();
+        if (updatedTree != null) {
+            processTreeGenerator(updatedTree, treeMapPanel);
         }
-        update();
-        field.setText(Integer.toString(level));
     }
 
-    private void handleLevelChange(
-            Supplier<Integer> levelSupplier,
-            Label label,
-            Button incrementButton,
-            Button decrementButton,
-            int min,
-            int max
-    ) {
-        int level = levelSupplier.get();
-        updateLevel(label, level);
-
-        incrementButton.setDisable(level >= max);
-        decrementButton.setDisable(level <= min);
+    private void processTreeGenerator(MultiTree<Info> tree, HBox panel) {
+        render.setTree(tree);
+        render.setConfig(service.getRenderConfiguration());
+        render.setInteractionOptions(service.getInteractionOptions());
+        MultiTree<PresentationNode> presentationTree = render.initialize(panel);
+        render.render(presentationTree, panel);
     }
 
-    @FXML
-    private void incrementLevel(ActionEvent event) {
-        handleLevelChange(
-                () -> service.incrementLevel(),
-                levelLabel,
-                incrementLevelButton,
-                decrementLevelButton,
-                1,
-                Consts.MAX_NUM_LEVEL_LIMIT
-        );
-    }
-
-    @FXML
-    private void decrementLevel(ActionEvent event) {
-        handleLevelChange(
-                () -> service.decrementLevel(),
-                levelLabel,
-                incrementLevelButton,
-                decrementLevelButton,
-                1,
-                Consts.MAX_NUM_LEVEL_LIMIT
-        );
-    }
-
-    @FXML
-    private void incrementLevelTitle(ActionEvent event) {
-        handleLevelChange(
-                () -> service.incrementLevelTitle(),
-                titleLevelLabel,
-                incrementLevelTitleButton,
-                decrementLevelTitleButton,
-                1,
-                Consts.MAX_NUM_TITLE_LEVEL_LIMIT
-        );
-    }
-
-    @FXML
-    private void decrementLevelTitle(ActionEvent event) {
-        handleLevelChange(
-                () -> service.decrementLevelTitle(),
-                titleLevelLabel,
-                incrementLevelTitleButton,
-                decrementLevelTitleButton,
-                1,
-                Consts.MAX_NUM_TITLE_LEVEL_LIMIT
-        );
-    }
-
-    @FXML
-    private void changeTheme(ActionEvent event) {
-        ThemeStyle selected = themeComboBox.getValue();
-        if (selected != null && selected != currentTheme) {
-            currentTheme = selected;
-
-            Preferences prefs = Preferences.userNodeForPackage(AppController.class);
-            prefs.put("theme", currentTheme.name());
-
-            Scene scene = themeComboBox.getScene();
-            if (scene != null) {
-                scene.getStylesheets().clear();
-                scene.getStylesheets().add(currentTheme.getPath());
-            }
-        }
+    private void setControlsDisabled(boolean disabled) {
+        resetButton.setDisable(disabled);
+        showFileOrExtensionButton.setDisable(disabled);
+        executableButton.setDisable(disabled);
+        showFilenamesButton.setDisable(disabled);
+        incrementLevelButton.setDisable(disabled);
+        decrementLevelButton.setDisable(disabled);
+        incrementLevelTitleButton.setDisable(disabled);
+        decrementLevelTitleButton.setDisable(disabled);
     }
 }
