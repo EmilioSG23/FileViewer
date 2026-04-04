@@ -42,52 +42,66 @@ build.bat
 ## Arquitectura del Proyecto
 
 ```
-src/main/java/com/emiliosg23/
-├── App.java                  # Clase principal de la aplicación JavaFX
-├── Launcher.java             # Punto de entrada (main) que invoca App
+src/main/java/com/fileviewer/
+├── App.java                          # Clase principal de la aplicación JavaFX
+├── Launcher.java                     # Punto de entrada (main) que invoca App
+├── application/
+│   ├── AppLogic.java                 # Lógica de negocio central
+│   ├── AppService.java               # Fachada de servicios
+│   ├── Consts.java                   # Constantes de configuración
+│   └── RenderConfiguration.java      # Configuración de renderizado
 ├── controllers/
-│   └── AppController.java    # Controlador FXML de la interfaz principal
-├── logic/
-│   ├── AppLogic.java         # Lógica de negocio central
-│   ├── AppService.java       # Servicio de configuración y estado
-│   ├── DirectoryTreeBuilder.java  # Escaneo paralelo con ForkJoinPool
-│   ├── TreeInfoGenerator.java     # Generación y transformación de árboles
-│   ├── TreeRender.java            # Renderizado del treemap en la UI
-│   └── strategies/
-│       ├── TreeTransformerStrategy.java
-│       ├── AcumulativeTransformerStrategy.java
-│       └── FileExtensionTransformerStrategy.java
-├── models/
-│   ├── Info.java             # Clase base para elementos del sistema de archivos
-│   ├── FileInfo.java         # Información de un archivo
-│   ├── DirectoryInfo.java    # Información de un directorio
-│   ├── Modes.java            # Enum de modos (EXECUTABLE, FILE_EXTENSION, ACUMULATIVE)
-│   ├── Consts.java           # Constantes de configuración
-│   ├── PanelConfiguration.java    # Configuración del panel de visualización
-│   └── RenderConfiguration.java   # Configuración de renderizado
+│   ├── AppController.java            # Controlador FXML de la interfaz principal
+│   └── UiStateManager.java           # Gestión de estado visual de controles UI
+├── domain/
+│   ├── interaction/
+│   │   ├── InteractionOptions.java   # Opciones de interacción del treemap
+│   │   └── NodeInteractionPolicy.java # Política de clic en nodos
+│   ├── model/
+│   │   ├── DirectoryInfo.java        # Información de un directorio
+│   │   ├── ExtensionInfo.java        # Información de extensión agrupada
+│   │   ├── FileInfo.java             # Información de un archivo
+│   │   └── Info.java                 # Clase base para elementos del sistema
+│   ├── pipeline/
+│   │   ├── AccumulatedTransformation.java  # Transformación acumulativa
+│   │   ├── FileExtensionTransformation.java # Transformación por extensión
+│   │   ├── TransformationPipeline.java      # Pipeline de transformaciones
+│   │   └── TreeTransformation.java          # Interfaz de transformación
+│   └── scanner/
+│       ├── DirectoryScanner.java       # Contrato de escaneo de directorios
+│       └── NodeMetricStrategy.java     # Estrategia de métrica de nodos
+├── infrastructure/
+│   ├── interaction/
+│   │   └── OpenFileInteractionPolicy.java # Política de apertura de archivos
+│   ├── preferences/
+│   │   └── ThemePreferences.java     # Persistencia de preferencias de tema
+│   └── scanner/
+│       └── DirectoryTreeBuilder.java # Escaneo paralelo con ForkJoinPool
 ├── tdas/
-│   ├── lists/                # Implementaciones de listas genéricas
-│   │   ├── List.java         # Interfaz base
+│   ├── lists/                        # Implementaciones propias de listas
+│   │   ├── List.java                 # Interfaz base
 │   │   ├── ListConvertors.java
-│   │   ├── al/               # ArrayList
-│   │   ├── ll/               # LinkedList
-│   │   ├── dll/              # DoublyLinkedList
-│   │   ├── cll/              # CircularLinkedList
-│   │   └── dcll/             # DoublyCircularLinkedList
+│   │   ├── al/                       # ArrayList
+│   │   ├── dll/                      # DoublyLinkedList
+│   │   ├── cll/                      # CircularLinkedList
+│   │   └── dcll/                     # DoublyCircularLinkedList
 │   └── trees/
-│       ├── MultiTree.java    # Árbol n-ario genérico
-│       └── MultiTreeNode.java
+│       ├── MultiTree.java            # Árbol n-ario genérico
+│       └── MultiTreeNode.java        # Nodo del árbol n-ario
 ├── utils/
-│   ├── AppUtils.java         # Utilidades de alertas y diálogos
-│   ├── FileUtils.java        # Utilidades de archivos
-│   ├── FileOpener.java       # Apertura de archivos con app del sistema
-│   └── FileExtensionUtils.java   # Extracción de extensiones
+│   ├── AppUtils.java                 # Utilidades de alertas y diálogos
+│   ├── FileExtensionUtils.java       # Utilidades de extensiones y colores
+│   ├── FileOpener.java               # Apertura de archivos con app del sistema
+│   └── FileUtils.java                # Utilidades de archivos y rutas
 └── view/
     ├── PresentationNode.java          # Nodo base de presentación
-    ├── DirectoryPresentationNode.java # Nodo para directorios
-    ├── FilePresentationNode.java      # Nodo para archivos
-    ├── ExtensionPresentationNode.java # Nodo para extensiones
-    └── ThemeStyle.java                # Gestión de estilos de tema
+    ├── PresentationNodeFactory.java   # Factory para nodos de presentación
+    ├── ThemeStyle.java                # Gestión de estilos de tema
+    ├── TreeRender.java                # Motor de renderizado del treemap
+    └── nodes/
+        ├── DirectoryPresentationNode.java # Nodo para directorios
+        ├── ExtensionPresentationNode.java # Nodo para extensiones
+        └── FilePresentationNode.java      # Nodo para archivos
 ```
 
 ## Diseño de Concurrencia
@@ -101,8 +115,10 @@ El escaneo de directorios utiliza el framework **Fork/Join** de Java para parale
 
 ## Patrones de Diseño
 
-- **MVC** — Separación entre controladores (`controllers/`), modelos (`models/`), lógica (`logic/`) y vistas (`view/`).
-- **Strategy** — `TreeTransformerStrategy` permite intercambiar algoritmos de transformación del árbol (extensión, acumulativo).
+- **MVC** — Separación entre controladores (`controllers/`), modelos (`domain/model/`), lógica (`application/`) y vistas (`view/`).
+- **Strategy** — `NodeMetricStrategy` y `NodeInteractionPolicy` permiten intercambiar comportamientos.
+- **Factory** — `PresentationNodeFactory` encapsula la creación de nodos de presentación.
+- **Pipeline** — `TransformationPipeline` encadena transformaciones con dependencias.
 - **Fork/Join** — Paralelización del escaneo de directorios mediante tareas recursivas.
 
 ## Licencia
