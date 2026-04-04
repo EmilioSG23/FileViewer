@@ -2,6 +2,8 @@ package com.fileviewer.controllers;
 
 import com.fileviewer.application.AppService;
 import com.fileviewer.application.Consts;
+import com.fileviewer.domain.pipeline.AccumulatedTransformation;
+import com.fileviewer.domain.pipeline.FileExtensionTransformation;
 import com.fileviewer.utils.AppUtils;
 
 import javafx.scene.control.Button;

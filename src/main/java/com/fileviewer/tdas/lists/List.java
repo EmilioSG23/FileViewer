@@ -1,4 +1,4 @@
-﻿package com.fileviewer.tdas.lists;
+package com.fileviewer.tdas.lists;
 
 import java.io.Serializable;
 import java.util.Comparator;

@@ -1,4 +1,4 @@
-﻿package com.fileviewer.infrastructure.preferences;
+package com.fileviewer.infrastructure.preferences;
 
 import java.util.prefs.Preferences;
 

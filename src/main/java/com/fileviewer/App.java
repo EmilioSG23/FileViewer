@@ -1,4 +1,4 @@
-﻿package com.fileviewer;
+package com.fileviewer;
 
 import java.io.IOException;
 

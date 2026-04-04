@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.pipeline;
+package com.fileviewer.domain.pipeline;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertInstanceOf;

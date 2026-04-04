@@ -1,4 +1,4 @@
-﻿package com.fileviewer.utils;
+package com.fileviewer.utils;
 
 import java.util.HashMap;
 import java.util.Locale;

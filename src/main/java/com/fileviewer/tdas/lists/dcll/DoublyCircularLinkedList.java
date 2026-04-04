@@ -1,4 +1,4 @@
-﻿package com.fileviewer.tdas.lists.dcll;
+package com.fileviewer.tdas.lists.dcll;
 
 
 import java.util.Comparator;

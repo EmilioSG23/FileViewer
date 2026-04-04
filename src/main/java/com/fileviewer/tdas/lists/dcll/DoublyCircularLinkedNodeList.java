@@ -1,4 +1,4 @@
-﻿package com.fileviewer.tdas.lists.dcll;
+package com.fileviewer.tdas.lists.dcll;
 
 /**
  * Nodo de una lista doblemente enlazada circular.

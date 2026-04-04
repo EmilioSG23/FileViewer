@@ -1,4 +1,4 @@
-﻿package com.fileviewer.tdas.lists.dll;
+package com.fileviewer.tdas.lists.dll;
 
 /**
  * Nodo de una lista doblemente enlazada.

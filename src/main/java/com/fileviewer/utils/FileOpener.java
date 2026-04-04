@@ -1,4 +1,4 @@
-﻿package com.fileviewer.utils;
+package com.fileviewer.utils;
 
 import java.awt.Desktop;
 import java.io.File;

@@ -1,4 +1,4 @@
-﻿package com.fileviewer.utils;
+package com.fileviewer.utils;
 
 /**
  * Utilidades para operaciones con archivos y rutas.

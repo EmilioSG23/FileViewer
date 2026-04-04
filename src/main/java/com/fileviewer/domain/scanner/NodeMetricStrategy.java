@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.scanner;
+package com.fileviewer.domain.scanner;
 
 import java.io.File;
 

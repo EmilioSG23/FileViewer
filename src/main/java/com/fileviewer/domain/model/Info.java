@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.model;
+package com.fileviewer.domain.model;
 
 import com.fileviewer.utils.FileUtils;
 

@@ -1,4 +1,4 @@
-﻿package com.fileviewer.view.nodes;
+package com.fileviewer.view.nodes;
 
 import com.fileviewer.domain.model.ExtensionInfo;
 import com.fileviewer.utils.FileExtensionUtils;

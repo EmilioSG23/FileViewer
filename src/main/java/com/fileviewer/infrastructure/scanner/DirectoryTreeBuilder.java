@@ -1,4 +1,4 @@
-﻿package com.fileviewer.infrastructure.scanner;
+package com.fileviewer.infrastructure.scanner;
 
 import java.io.File;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.scanner;
+package com.fileviewer.domain.scanner;
 
 import com.fileviewer.domain.model.Info;
 import com.fileviewer.tdas.trees.MultiTree;

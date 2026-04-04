@@ -1,4 +1,4 @@
-﻿package com.fileviewer.tdas.lists;
+package com.fileviewer.tdas.lists;
 
 import com.fileviewer.tdas.lists.al.ArrayList;
 import com.fileviewer.tdas.lists.dcll.DoublyCircularLinkedList;

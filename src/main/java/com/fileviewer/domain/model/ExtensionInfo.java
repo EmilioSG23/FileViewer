@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.model;
+package com.fileviewer.domain.model;
 
 /**
  * Representa una extensión de archivo agrupada en el modo de visualización por

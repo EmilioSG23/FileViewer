@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.interaction;
+package com.fileviewer.domain.interaction;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertFalse;

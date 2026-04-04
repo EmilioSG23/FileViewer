@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.pipeline;
+package com.fileviewer.domain.pipeline;
 
 import com.fileviewer.domain.model.DirectoryInfo;
 import com.fileviewer.domain.model.ExtensionInfo;

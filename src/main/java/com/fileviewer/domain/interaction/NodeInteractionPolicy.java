@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.interaction;
+package com.fileviewer.domain.interaction;
 
 import com.fileviewer.domain.model.Info;
 

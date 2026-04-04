@@ -1,6 +1,4 @@
-﻿package com.fileviewer.application;
-
-import com.fileviewer.utils.Consts;
+package com.fileviewer.application;
 
 /**
  * Parámetros puramente de renderizado del treemap: niveles de profundidad,

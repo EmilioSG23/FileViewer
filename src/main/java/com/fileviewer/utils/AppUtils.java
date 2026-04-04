@@ -1,4 +1,4 @@
-﻿package com.fileviewer.utils;
+package com.fileviewer.utils;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;

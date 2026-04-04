@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.pipeline;
+package com.fileviewer.domain.pipeline;
 
 import java.util.Set;
 

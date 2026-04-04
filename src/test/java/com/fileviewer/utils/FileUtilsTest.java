@@ -1,4 +1,4 @@
-﻿package com.fileviewer.utils;
+package com.fileviewer.utils;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

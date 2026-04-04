@@ -1,4 +1,4 @@
-﻿package com.fileviewer.tdas.trees;
+package com.fileviewer.tdas.trees;
 
 import com.fileviewer.tdas.lists.List;
 import com.fileviewer.tdas.lists.dll.DoublyLinkedList;
@@ -85,13 +85,6 @@ public class MultiTree<T> {
         return root.getChildren().addLast(child);
     }
 
-    public boolean addChild(T child) {
-        if (child == null) {
-            throw new IllegalArgumentException("Cannot add a null child");
-        }
-        return root.getChildren().addLast(new MultiTree<>(child));
-    }
-
     /**
      * Añade un elemento como nuevo hijo hoja de la raíz.
      *
@@ -99,6 +92,9 @@ public class MultiTree<T> {
      * @return {@code true} si se añadió correctamente
      */
     public boolean addChild(T child) {
+        if (child == null) {
+            throw new IllegalArgumentException("Cannot add a null child");
+        }
         return root.getChildren().addLast(new MultiTree<>(child));
     }
 

@@ -1,4 +1,4 @@
-﻿package com.fileviewer.tdas.lists.ll;
+package com.fileviewer.tdas.lists.ll;
 
 import java.util.Comparator;
 import java.util.Iterator;

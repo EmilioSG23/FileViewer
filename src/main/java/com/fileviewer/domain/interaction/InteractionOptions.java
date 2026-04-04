@@ -1,4 +1,4 @@
-﻿package com.fileviewer.domain.interaction;
+package com.fileviewer.domain.interaction;
 
 /**
  * Opciones de interacción del treemap: encapsula la

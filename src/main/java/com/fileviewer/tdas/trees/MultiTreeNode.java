@@ -1,4 +1,4 @@
-﻿package com.fileviewer.tdas.trees;
+package com.fileviewer.tdas.trees;
 
 import com.fileviewer.tdas.lists.List;
 import com.fileviewer.tdas.lists.dll.DoublyLinkedList;

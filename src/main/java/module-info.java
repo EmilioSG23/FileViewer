@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Modulo principal de FileViewer.
  *
  * <p>Aplicacion JavaFX para visualizar la estructura de directorios como treemaps

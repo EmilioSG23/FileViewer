@@ -1,4 +1,4 @@
-﻿package com.fileviewer.infrastructure.interaction;
+package com.fileviewer.infrastructure.interaction;
 
 import java.io.File;
 import java.io.IOException;
