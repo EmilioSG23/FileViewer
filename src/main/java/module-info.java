@@ -15,15 +15,15 @@
  *   <li>{@code tdas} — estructuras de datos propias (árboles y listas).</li>
  * </ul>
  */
-module com.emiliosg23 {
-    requires javafx.controls;
-    requires javafx.fxml;
+module com.fileviewer {
+		requires javafx.fxml;
     requires java.desktop;
     requires java.prefs;
+		requires transitive javafx.controls;
     requires transitive javafx.graphics;
 
-    opens com.emiliosg23 to javafx.fxml;
-    exports com.emiliosg23;
-    opens com.emiliosg23.controllers to javafx.fxml;
-    exports com.emiliosg23.controllers;
+    opens com.fileviewer to javafx.fxml;
+    exports com.fileviewer;
+    opens com.fileviewer.controllers to javafx.fxml;
+    exports com.fileviewer.controllers;
 }
