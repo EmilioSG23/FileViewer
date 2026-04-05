@@ -1,13 +1,15 @@
 package com.fileviewer.domain.pipeline;
 
-import java.util.Set;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.util.Set;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -28,6 +30,7 @@ class TransformationPipelineTest {
     private AccumulatedTransformation accTransform;
 
     @BeforeEach
+    @SuppressWarnings("unused")
     void setUp() {
         pipeline = new TransformationPipeline();
         extTransform = new FileExtensionTransformation();
@@ -75,7 +78,8 @@ class TransformationPipelineTest {
     @Test
     @DisplayName("enable con ID desconocido lanza excepción")
     void enable_unknownId_throwsException() {
-        assertThrows(IllegalArgumentException.class, () -> pipeline.enable("UNKNOWN_MODE"));
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> pipeline.enable("UNKNOWN_MODE"));
+        assertNotNull(ex);
     }
 
     // -------------------------------------------------------------------------
