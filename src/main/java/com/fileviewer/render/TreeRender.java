@@ -1,13 +1,11 @@
-package com.fileviewer.view;
+package com.fileviewer.render;
 
 import java.util.Objects;
 
-import com.fileviewer.application.RenderConfiguration;
 import com.fileviewer.domain.interaction.InteractionOptions;
-import com.fileviewer.domain.model.DirectoryInfo;
 import com.fileviewer.domain.model.Info;
 import com.fileviewer.tdas.trees.MultiTree;
-import com.fileviewer.view.nodes.DirectoryPresentationNode;
+import com.fileviewer.view.PresentationNode;
 
 import javafx.scene.layout.Pane;
 
@@ -47,7 +45,8 @@ public class TreeRender {
      *
      * @param tree árbol de información a renderizar
      * @param config configuración de renderizado
-     * @param interactionOptions opciones de interacción; {@code null} se trata como {@link InteractionOptions#none()}
+     * @param interactionOptions opciones de interacción; {@code null} se trata
+     * como {@link InteractionOptions#none()}
      */
     public TreeRender(MultiTree<Info> tree, RenderConfiguration config, InteractionOptions interactionOptions) {
         this.tree = Objects.requireNonNull(tree, "tree cannot be null");
@@ -57,32 +56,24 @@ public class TreeRender {
 
     /**
      * Crea un renderizador vacío. Debe configurarse con setters antes de usar.
-     * @deprecated Use {@link #TreeRender(MultiTree, RenderConfiguration, InteractionOptions)}
      */
-    @Deprecated
     public TreeRender() {
     }
 
     /**
-     * @deprecated Pass tree in constructor
      */
-    @Deprecated
     public void setTree(MultiTree<Info> tree) {
         this.tree = tree;
     }
 
     /**
-     * @deprecated Pass config in constructor
      */
-    @Deprecated
     public void setConfig(RenderConfiguration config) {
         this.config = config;
     }
 
     /**
-     * @deprecated Pass interactionOptions in constructor
      */
-    @Deprecated
     public void setInteractionOptions(InteractionOptions interactionOptions) {
         this.interactionOptions = interactionOptions != null
                 ? interactionOptions
@@ -98,8 +89,12 @@ public class TreeRender {
      */
     public MultiTree<PresentationNode> initialize(Pane paneRoot) {
         paneRoot.getChildren().clear();
-        long totalSize = tree.getRoot().getContent().getSize();
-        return initializeRecursive(tree, paneRoot, totalSize, config);
+        PresentationTreeBuilder builder = new PresentationTreeBuilder();
+        return builder.tree(tree)
+                .paneRoot(paneRoot)
+                .config(config)
+                .policy(interactionOptions.getPolicy())
+                .build();
     }
 
     /**
@@ -110,48 +105,8 @@ public class TreeRender {
      * @param paneRoot panel donde se insertan los nodos
      */
     public void render(MultiTree<PresentationNode> presentationTree, Pane paneRoot) {
-        PresentationNode node = presentationTree.getRoot().getContent();
-        paneRoot.getChildren().add(node.getTreePane());
-
-        if (node instanceof DirectoryPresentationNode dirNode) {
-            Pane childPane = dirNode.getChildTreePane();
-            for (MultiTree<PresentationNode> subtree : presentationTree.getRoot().getChildren()) {
-                render(subtree, childPane);
-            }
-        }
+        SceneGraphRenderer renderer = new SceneGraphRenderer();
+        renderer.render(presentationTree, paneRoot);
     }
 
-    // -------------------------------------------------------------------------
-    // Inicialización recursiva
-    // -------------------------------------------------------------------------
-    private MultiTree<PresentationNode> initializeRecursive(
-            MultiTree<Info> tree, Pane paneRoot, long sizeParent, RenderConfiguration config) {
-
-        if (config.getLimitLevel() < 0) {
-            return null;
-        }
-
-        Info info = tree.getRoot().getContent();
-        PresentationNode presentationNode = PresentationNodeFactory.create(info, config,
-                interactionOptions.getPolicy());
-        presentationNode.initializeNode(sizeParent, paneRoot, config.isVerticalStart());
-        presentationNode.createNode(true);
-
-        MultiTree<PresentationNode> presentationTree = new MultiTree<>(presentationNode);
-
-        if (info instanceof DirectoryInfo directoryInfo && config.getLimitLevel() > 0) {
-            DirectoryPresentationNode dirNode = (DirectoryPresentationNode) presentationNode;
-            Pane childPane = dirNode.getChildTreePane();
-            RenderConfiguration childConfig = config.createChildConfiguration();
-
-            for (MultiTree<Info> subtree : tree.getRoot().getChildren()) {
-                MultiTree<PresentationNode> childTree = initializeRecursive(
-                        subtree, childPane, directoryInfo.getSize(), childConfig);
-                if (childTree != null) {
-                    presentationTree.addChild(childTree);
-                }
-            }
-        }
-        return presentationTree;
-    }
 }

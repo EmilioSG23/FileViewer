@@ -1,4 +1,6 @@
-package com.fileviewer.application;
+package com.fileviewer.render;
+
+import com.fileviewer.application.Consts;
 
 /**
  * Parámetros puramente de renderizado del treemap: niveles de profundidad,
@@ -7,7 +9,7 @@ package com.fileviewer.application;
  * <p>
  * El método {@link #createChildConfiguration()} produce una configuración
  * derivada con niveles decrementados y orientación alternada, usada por
- * {@link com.fileviewer.view.TreeRender} en cada nivel del árbol.</p>
+ * {@link com.fileviewer.render.TreeRender} en cada nivel del árbol.</p>
  */
 public class RenderConfiguration {
 

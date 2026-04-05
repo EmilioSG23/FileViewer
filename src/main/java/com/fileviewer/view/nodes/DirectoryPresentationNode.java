@@ -1,8 +1,8 @@
 package com.fileviewer.view.nodes;
 
 import com.fileviewer.domain.model.DirectoryInfo;
-import com.fileviewer.utils.AppUtils;
 import com.fileviewer.utils.FileExtensionUtils;
+import com.fileviewer.utils.UiUtils;
 import com.fileviewer.view.PresentationNode;
 
 import javafx.geometry.Pos;
@@ -97,18 +97,18 @@ public class DirectoryPresentationNode extends PresentationNode {
             rootPane.getChildren().add(title);
         }
         if (isVertical()) {
-            childTreePane = new VBox(); 
-        }else {
+            childTreePane = new VBox();
+        } else {
             childTreePane = new HBox();
         }
 
         if (title != null) {
-            AppUtils.setHeight(childTreePane, rootPane.getPrefHeight() - TITLE_HEIGHT_OFFSET); 
-        }else {
-            AppUtils.setHeight(childTreePane, rootPane.getPrefHeight());
+            UiUtils.setHeight(childTreePane, rootPane.getPrefHeight() - TITLE_HEIGHT_OFFSET);
+        } else {
+            UiUtils.setHeight(childTreePane, rootPane.getPrefHeight());
         }
 
-        AppUtils.setWidth(childTreePane, rootPane.getPrefWidth());
+        UiUtils.setWidth(childTreePane, rootPane.getPrefWidth());
 
         rootPane.getChildren().add(childTreePane);
         setTreePane(rootPane);

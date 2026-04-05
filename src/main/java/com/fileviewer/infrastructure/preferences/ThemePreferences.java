@@ -2,7 +2,7 @@ package com.fileviewer.infrastructure.preferences;
 
 import java.util.prefs.Preferences;
 
-import com.fileviewer.view.ThemeStyle;
+import com.fileviewer.style.ThemeStyle;
 
 /**
  * Persiste y recupera la preferencia de tema del usuario mediante

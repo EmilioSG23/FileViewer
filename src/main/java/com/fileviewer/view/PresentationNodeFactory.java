@@ -5,10 +5,10 @@ import com.fileviewer.domain.model.DirectoryInfo;
 import com.fileviewer.domain.model.ExtensionInfo;
 import com.fileviewer.domain.model.FileInfo;
 import com.fileviewer.domain.model.Info;
+import com.fileviewer.render.RenderConfiguration;
 import com.fileviewer.view.nodes.DirectoryPresentationNode;
 import com.fileviewer.view.nodes.ExtensionPresentationNode;
 import com.fileviewer.view.nodes.FilePresentationNode;
-import com.fileviewer.view.render.RenderConfiguration;
 
 /**
  * Factory para crear nodos de presentación según el tipo de informaci&oacute;n.

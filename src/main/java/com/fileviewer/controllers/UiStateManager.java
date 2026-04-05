@@ -4,7 +4,7 @@ import com.fileviewer.application.AppService;
 import com.fileviewer.application.Consts;
 import com.fileviewer.domain.pipeline.AccumulatedTransformation;
 import com.fileviewer.domain.pipeline.FileExtensionTransformation;
-import com.fileviewer.utils.AppUtils;
+import com.fileviewer.utils.UiUtils;
 
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -56,12 +56,12 @@ public class UiStateManager {
      * Sincroniza todos los controles con el estado actual del servicio.
      */
     public void syncWithService() {
-        AppUtils.changeButtonState(showFileOrExtensionButton,
+        UiUtils.changeButtonState(showFileOrExtensionButton,
                 service.isTransformationActive(FileExtensionTransformation.ID));
-        AppUtils.changeButtonState(acumulativeButton,
+        UiUtils.changeButtonState(acumulativeButton,
                 service.isTransformationActive(AccumulatedTransformation.ID));
-        AppUtils.changeButtonState(executableButton, service.isExecutableMode());
-        AppUtils.changeButtonState(showFilenamesButton,
+        UiUtils.changeButtonState(executableButton, service.isExecutableMode());
+        UiUtils.changeButtonState(showFilenamesButton,
                 service.getRenderConfiguration().isShowFilenames());
 
         acumulativeButton.setDisable(
@@ -75,10 +75,10 @@ public class UiStateManager {
      * Actualiza los controles tras un reset completo.
      */
     public void resetControls() {
-        AppUtils.changeButtonState(showFileOrExtensionButton, false);
-        AppUtils.changeButtonState(acumulativeButton, false);
-        AppUtils.changeButtonState(executableButton, false);
-        AppUtils.changeButtonState(showFilenamesButton,
+        UiUtils.changeButtonState(showFileOrExtensionButton, false);
+        UiUtils.changeButtonState(acumulativeButton, false);
+        UiUtils.changeButtonState(executableButton, false);
+        UiUtils.changeButtonState(showFilenamesButton,
                 service.getRenderConfiguration().isShowFilenames());
 
         showFileOrExtensionButton.setDisable(false);
@@ -126,8 +126,8 @@ public class UiStateManager {
      * activo.
      */
     public void disableTransformationButtons() {
-        AppUtils.changeButtonState(showFileOrExtensionButton, false);
-        AppUtils.changeButtonState(acumulativeButton, false);
+        UiUtils.changeButtonState(showFileOrExtensionButton, false);
+        UiUtils.changeButtonState(acumulativeButton, false);
         showFileOrExtensionButton.setDisable(true);
         acumulativeButton.setDisable(true);
     }

@@ -1,4 +1,4 @@
-package com.fileviewer.view;
+package com.fileviewer.style;
 
 import com.fileviewer.App;
 

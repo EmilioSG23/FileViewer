@@ -3,8 +3,8 @@ package com.fileviewer.application;
 import com.fileviewer.domain.model.Info;
 import com.fileviewer.domain.pipeline.TransformationPipeline;
 import com.fileviewer.domain.scanner.DirectoryScanner;
+import com.fileviewer.render.RenderConfiguration;
 import com.fileviewer.tdas.trees.MultiTree;
-import com.fileviewer.view.render.RenderConfiguration;
 
 /**
  * Núcleo lógico de la aplicación. Coordina tres responsabilidades: 1. Escaneo —

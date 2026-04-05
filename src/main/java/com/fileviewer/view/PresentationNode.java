@@ -1,7 +1,7 @@
 package com.fileviewer.view;
 
 import com.fileviewer.domain.model.Info;
-import com.fileviewer.utils.AppUtils;
+import com.fileviewer.utils.UiUtils;
 import com.fileviewer.view.nodes.DirectoryPresentationNode;
 import com.fileviewer.view.nodes.ExtensionPresentationNode;
 import com.fileviewer.view.nodes.FilePresentationNode;
@@ -92,8 +92,8 @@ public abstract class PresentationNode {
             height = parentPane.getPrefHeight();
         }
 
-        AppUtils.setWidth(treePane, width);
-        AppUtils.setHeight(treePane, height);
+        UiUtils.setWidth(treePane, width);
+        UiUtils.setHeight(treePane, height);
     }
 
     /**

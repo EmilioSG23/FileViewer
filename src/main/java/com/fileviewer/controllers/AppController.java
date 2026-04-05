@@ -10,11 +10,12 @@ import com.fileviewer.domain.model.Info;
 import com.fileviewer.domain.pipeline.AccumulatedTransformation;
 import com.fileviewer.domain.pipeline.FileExtensionTransformation;
 import com.fileviewer.infrastructure.preferences.ThemePreferences;
+import com.fileviewer.render.TreeRender;
+import com.fileviewer.style.ThemeStyle;
 import com.fileviewer.tdas.trees.MultiTree;
 import com.fileviewer.utils.AppUtils;
+import com.fileviewer.utils.UiUtils;
 import com.fileviewer.view.PresentationNode;
-import com.fileviewer.view.ThemeStyle;
-import com.fileviewer.view.render.TreeRender;
 
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -212,9 +213,9 @@ public class AppController {
     @FXML
     private void changeFileExtensionMode(ActionEvent event) {
         boolean isActive = service.toggleTransformation(FileExtensionTransformation.ID);
-        AppUtils.changeButtonState(showFileOrExtensionButton, isActive);
+        UiUtils.changeButtonState(showFileOrExtensionButton, isActive);
         if (!isActive) {
-            AppUtils.changeButtonState(acumulativeButton, false);
+            UiUtils.changeButtonState(acumulativeButton, false);
         }
         acumulativeButton.setDisable(!isActive);
         update();
@@ -223,7 +224,7 @@ public class AppController {
     @FXML
     private void changeAcumulativeMode(ActionEvent event) {
         boolean isActive = service.toggleTransformation(AccumulatedTransformation.ID);
-        AppUtils.changeButtonState(acumulativeButton, isActive);
+        UiUtils.changeButtonState(acumulativeButton, isActive);
         update();
     }
 
@@ -233,7 +234,7 @@ public class AppController {
     @FXML
     private void changeExecutableMode(ActionEvent event) {
         boolean isActive = service.toggleExecutableMode();
-        AppUtils.changeButtonState(executableButton, isActive);
+        UiUtils.changeButtonState(executableButton, isActive);
 
         if (isActive) {
             service.disableTransformation(FileExtensionTransformation.ID);
@@ -250,7 +251,7 @@ public class AppController {
     @FXML
     private void showFilenames(ActionEvent event) {
         boolean showFilenames = service.showFilenames();
-        AppUtils.changeButtonState(showFilenamesButton, showFilenames);
+        UiUtils.changeButtonState(showFilenamesButton, showFilenames);
         update();
     }
 
