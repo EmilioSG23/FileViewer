@@ -28,11 +28,12 @@ public class App extends Application {
     private static AppService appService;
 
     /**
-     * Establece la referencia al servicio de la aplicación para su ciclo de vida.
+     * Establece la referencia al servicio de la aplicación para su ciclo de
+     * vida.
      *
      * @param service instancia del servicio
      */
-    public static void setService(AppService service) {
+    public static void setService(@SuppressWarnings("exports") AppService service) {
         App.appService = service;
     }
 
@@ -54,6 +55,7 @@ public class App extends Application {
      * @param alt nuevo alto de la ventana
      * @throws IOException si el FXML no se puede cargar
      */
+    @SuppressWarnings("unused")
     static void setRoot(Scene scene, Stage stage, String fxml, int anc, int alt) throws IOException {
         scene.setRoot(loadFXML(fxml));
         stage.setWidth(anc);

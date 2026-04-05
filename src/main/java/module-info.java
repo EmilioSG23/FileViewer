@@ -16,10 +16,10 @@
  * </ul>
  */
 module com.fileviewer {
-    requires javafx.controls;
-    requires javafx.fxml;
+		requires javafx.fxml;
     requires java.desktop;
     requires java.prefs;
+		requires transitive javafx.controls;
     requires transitive javafx.graphics;
 
     opens com.fileviewer to javafx.fxml;

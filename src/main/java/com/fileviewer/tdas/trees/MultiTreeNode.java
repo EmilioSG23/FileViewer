@@ -73,7 +73,6 @@ public class MultiTreeNode<T> {
      * @return {@code true} si tienen contenido igual
      */
     @Override
-    @SuppressWarnings("unchecked")
     public boolean equals(Object obj) {
         if (this == obj) {
             return true;

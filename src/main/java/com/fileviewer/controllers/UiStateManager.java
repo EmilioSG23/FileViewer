@@ -13,8 +13,8 @@ import javafx.scene.control.Label;
  * Gestiona el estado visual de los controles de la interfaz de usuario.
  *
  * <p>
- * Encapsula la sincronización entre el estado del servicio y los widgets
- * de la UI (botones, labels, estados de habilitación).</p>
+ * Encapsula la sincronización entre el estado del servicio y los widgets de la
+ * UI (botones, labels, estados de habilitación).</p>
  */
 public class UiStateManager {
 
@@ -32,7 +32,7 @@ public class UiStateManager {
 
     private final AppService service;
 
-    public UiStateManager(AppService service,
+    public UiStateManager(@SuppressWarnings("exports") AppService service,
             Button resetButton, Button showFileOrExtensionButton,
             Button acumulativeButton, Button executableButton,
             Button showFilenamesButton, Button incrementLevelButton,
@@ -122,7 +122,8 @@ public class UiStateManager {
     }
 
     /**
-     * Deshabilita botones de transformación cuando el modo ejecutable está activo.
+     * Deshabilita botones de transformación cuando el modo ejecutable está
+     * activo.
      */
     public void disableTransformationButtons() {
         AppUtils.changeButtonState(showFileOrExtensionButton, false);
@@ -132,7 +133,8 @@ public class UiStateManager {
     }
 
     /**
-     * Restaura los botones de transformación cuando el modo ejecutable se desactiva.
+     * Restaura los botones de transformación cuando el modo ejecutable se
+     * desactiva.
      */
     public void enableTransformationButtons() {
         showFileOrExtensionButton.setDisable(false);

@@ -8,6 +8,7 @@ import com.fileviewer.domain.pipeline.TransformationPipeline;
 import com.fileviewer.infrastructure.interaction.OpenFileInteractionPolicy;
 import com.fileviewer.infrastructure.scanner.DirectoryTreeBuilder;
 import com.fileviewer.tdas.trees.MultiTree;
+import com.fileviewer.view.render.RenderConfiguration;
 
 /**
  * Fachada de servicios — punto de entrada único para la capa de presentación.

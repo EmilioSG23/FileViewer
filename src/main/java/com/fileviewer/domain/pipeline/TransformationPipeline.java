@@ -186,6 +186,9 @@ public class TransformationPipeline {
     }
 
     private static Info copyInfo(Info info) {
+        if (info == null) {
+            return null;
+        }
         if (info instanceof DirectoryInfo dir) {
             return new DirectoryInfo(dir.getName(), dir.getSize());
         }

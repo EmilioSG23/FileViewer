@@ -34,27 +34,27 @@ public enum ThemeStyle {
 
     @Override
     public String toString() {
-        switch (this) {
-            case DARK:
-                return "Dark";
-            case DRACULA:
-                return "Dracula";
-            case GRUVBOX_DARK:
-                return "Gruvbox Dark";
-            case LIGHT:
-                return "Light";
-            case MONOKAI:
-                return "Monokai";
-            case NORD:
-                return "Nord";
-            case ONE_DARK:
-                return "One Dark";
-            case SOLARIZED_DARK:
-                return "Solarized Dark";
-            case SOLARIZED_LIGHT:
-                return "Solarized Light";
-            default:
-                return name();
-        }
+        return switch (this) {
+            case DARK ->
+                "Dark";
+            case DRACULA ->
+                "Dracula";
+            case GRUVBOX_DARK ->
+                "Gruvbox Dark";
+            case LIGHT ->
+                "Light";
+            case MONOKAI ->
+                "Monokai";
+            case NORD ->
+                "Nord";
+            case ONE_DARK ->
+                "One Dark";
+            case SOLARIZED_DARK ->
+                "Solarized Dark";
+            case SOLARIZED_LIGHT ->
+                "Solarized Light";
+            default ->
+                name();
+        };
     }
 }

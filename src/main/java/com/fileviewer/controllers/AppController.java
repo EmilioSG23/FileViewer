@@ -14,7 +14,7 @@ import com.fileviewer.tdas.trees.MultiTree;
 import com.fileviewer.utils.AppUtils;
 import com.fileviewer.view.PresentationNode;
 import com.fileviewer.view.ThemeStyle;
-import com.fileviewer.view.TreeRender;
+import com.fileviewer.view.render.TreeRender;
 
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
@@ -38,7 +38,8 @@ import javafx.stage.Stage;
  * <p>
  * Adaptador FXML: lee eventos del usuario, delega toda la lógica a
  * {@link AppService} y actualiza los widgets mediante {@link UiStateManager}.
- * El escaneo de directorios se ejecuta en un hilo de fondo mediante {@link Task}.</p>
+ * El escaneo de directorios se ejecuta en un hilo de fondo mediante
+ * {@link Task}.</p>
  *
  * <p>
  * Las operaciones de dominio (transformaciones, interacción) se identifican con
@@ -50,6 +51,7 @@ import javafx.stage.Stage;
  * @see TreeRender
  * @see ThemePreferences
  */
+@SuppressWarnings("unused")
 public class AppController {
 
     private static final int HELP_WINDOW_WIDTH = 450;

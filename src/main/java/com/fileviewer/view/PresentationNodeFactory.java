@@ -1,6 +1,5 @@
 package com.fileviewer.view;
 
-import com.fileviewer.application.RenderConfiguration;
 import com.fileviewer.domain.interaction.NodeInteractionPolicy;
 import com.fileviewer.domain.model.DirectoryInfo;
 import com.fileviewer.domain.model.ExtensionInfo;
@@ -9,13 +8,15 @@ import com.fileviewer.domain.model.Info;
 import com.fileviewer.view.nodes.DirectoryPresentationNode;
 import com.fileviewer.view.nodes.ExtensionPresentationNode;
 import com.fileviewer.view.nodes.FilePresentationNode;
+import com.fileviewer.view.render.RenderConfiguration;
 
 /**
  * Factory para crear nodos de presentación según el tipo de informaci&oacute;n.
  *
  * <p>
  * Encapsula la l&oacute;gica de creaci&oacute;n de {@link PresentationNode}
- * concretos, eliminando los bloques {@code instanceof} dispersos en el c&oacute;digo.</p>
+ * concretos, eliminando los bloques {@code instanceof} dispersos en el
+ * c&oacute;digo.</p>
  */
 public class PresentationNodeFactory {
 
@@ -23,7 +24,8 @@ public class PresentationNodeFactory {
     }
 
     /**
-     * Crea el nodo de presentaci&oacute;n adecuado para el tipo de informaci&oacute;n dado.
+     * Crea el nodo de presentaci&oacute;n adecuado para el tipo de
+     * informaci&oacute;n dado.
      *
      * @param info informaci&oacute;n del elemento
      * @param config configuraci&oacute;n de renderizado
@@ -33,6 +35,9 @@ public class PresentationNodeFactory {
      */
     public static PresentationNode create(Info info, RenderConfiguration config,
             NodeInteractionPolicy policy) {
+        if (info == null) {
+            throw new IllegalArgumentException("Info cannot be null");
+        }
         if (info instanceof DirectoryInfo dirInfo) {
             return new DirectoryPresentationNode(dirInfo,
                     config.getLimitLevelTitle() > 0, config.getLimitLevel() == 0);
