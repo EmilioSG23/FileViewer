@@ -1,126 +1,126 @@
 # FileViewer
 
-Aplicación de escritorio desarrollada en **Java 17** con **JavaFX 21** que permite visualizar la estructura de directorios mediante un **treemap interactivo**. Cada archivo se representa como un rectángulo cuyo tamaño es proporcional al peso del archivo, facilitando la identificación rápida de los archivos más grandes.
+Desktop application built with **Java 17** and **JavaFX 21** that visualizes directory structures using an interactive **treemap**. Each file is represented as a rectangle whose area is proportional to the file size, making it easy to spot the largest files.
 
-## Características
+## Features
 
-- **Visualización Treemap** — Representación gráfica de la estructura de un directorio donde el área de cada rectángulo corresponde al tamaño del archivo.
-- **Modo Extensión** — Agrupa los archivos por extensión dentro de cada directorio para identificar qué tipos de archivo ocupan más espacio.
-- **Modo Acumulativo** — Consolida todas las extensiones en un solo nivel, ofreciendo una vista global de la distribución por tipo de archivo.
-- **Modo Ejecutable** — Permite abrir archivos directamente desde la visualización haciendo clic sobre ellos.
-- **Control de Profundidad** — Ajusta el nivel de profundidad de exploración (máximo 10 niveles) y el nivel de títulos (máximo 3 niveles).
-- **Temas** — Selección de temas visuales mediante un combo desplegable.
-- **Mostrar/Ocultar Nombres** — Alterna la visibilidad de los nombres de archivo en el treemap.
-- **Escaneo Paralelo** — Utiliza `ForkJoinPool` para calcular tamaños de directorios aprovechando todos los núcleos del procesador.
-- **Carga Asíncrona** — El escaneo de directorios se ejecuta en segundo plano mediante `javafx.concurrent.Task`, manteniendo la interfaz responsiva.
+- **Treemap Visualization** — Graphical representation of a directory tree where each rectangle's area corresponds to the file size.
+- **Extension Mode** — Groups files by extension within each directory to identify which file types occupy the most space.
+- **Accumulated Mode** — Consolidates extensions into a single level for a global view of distribution by file type.
+- **Executable Mode** — Allows opening files directly from the treemap by clicking them.
+- **Depth Control** — Adjust the exploration depth (up to 10 levels) and title depth (up to 3 levels).
+- **Themes** — Select visual themes via a dropdown.
+- **Show/Hide Names** — Toggle visibility of file names in the treemap.
+- **Parallel Scanning** — Uses `ForkJoinPool` to compute directory sizes leveraging all CPU cores.
+- **Asynchronous Loading** — Directory scanning runs in a background `javafx.concurrent.Task` to keep the UI responsive.
 
-## Requisitos
+## Requirements
 
-| Componente | Versión mínima            |
-| ---------- | ------------------------- |
-| Java (JDK) | 17                        |
-| Maven      | 3.6+                      |
-| JavaFX     | 21 (gestionado por Maven) |
+| Component | Minimum version |
+| --------- | ----------------|
+| Java (JDK) | 17 |
+| Maven | 3.6+ |
+| JavaFX | 21 (managed by Maven) |
 
-## Compilar y Ejecutar
+## Build and Run
 
 ```bash
-# Compilar el proyecto
+# Build the project
 mvn clean compile
 
-# Ejecutar la aplicación
+# Run the application
 mvn javafx:run
 ```
 
-También se puede usar el script incluido:
+You can also use the included script:
 
 ```bash
 # Windows
 build.bat
 ```
 
-## Arquitectura del Proyecto
+## Project Architecture
 
 ```
-src/main/java/com/fileviewer/
-├── App.java                          # Clase principal de la aplicación JavaFX
-├── Launcher.java                     # Punto de entrada (main) que invoca App
+
+├── App.java                          # Main JavaFX application class
+├── Launcher.java                     # Entry point that launches App
 ├── application/
-│   ├── AppLogic.java                 # Lógica de negocio central
-│   ├── AppService.java               # Fachada de servicios
-│   ├── Consts.java                   # Constantes de configuración
-│   └── RenderConfiguration.java      # Configuración de renderizado
+│   ├── AppLogic.java                 # Core business logic
+│   ├── AppService.java               # Service facade
+│   ├── Consts.java                   # Configuration constants
+│   └── RenderConfiguration.java      # Rendering configuration
 ├── controllers/
-│   ├── AppController.java            # Controlador FXML de la interfaz principal
-│   └── UiStateManager.java           # Gestión de estado visual de controles UI
+│   ├── AppController.java            # FXML controller for main UI
+│   └── UiStateManager.java           # UI state management for controls
 ├── domain/
 │   ├── interaction/
-│   │   ├── InteractionOptions.java   # Opciones de interacción del treemap
-│   │   └── NodeInteractionPolicy.java # Política de clic en nodos
+│   │   ├── InteractionOptions.java   # Treemap interaction options
+│   │   └── NodeInteractionPolicy.java # Node click policy
 │   ├── model/
-│   │   ├── DirectoryInfo.java        # Información de un directorio
-│   │   ├── ExtensionInfo.java        # Información de extensión agrupada
-│   │   ├── FileInfo.java             # Información de un archivo
-│   │   └── Info.java                 # Clase base para elementos del sistema
+│   │   ├── DirectoryInfo.java        # Directory information
+│   │   ├── ExtensionInfo.java        # Aggregated extension info
+│   │   ├── FileInfo.java             # File information
+│   │   └── Info.java                 # Base class for filesystem items
 │   ├── pipeline/
-│   │   ├── AccumulatedTransformation.java  # Transformación acumulativa
-│   │   ├── FileExtensionTransformation.java # Transformación por extensión
-│   │   ├── TransformationPipeline.java      # Pipeline de transformaciones
-│   │   └── TreeTransformation.java          # Interfaz de transformación
+│   │   ├── AccumulatedTransformation.java  # Accumulation transformation
+│   │   ├── FileExtensionTransformation.java # Extension-based transformation
+│   │   ├── TransformationPipeline.java      # Transformation pipeline
+│   │   └── TreeTransformation.java          # Transformation interface
 │   └── scanner/
-│       ├── DirectoryScanner.java       # Contrato de escaneo de directorios
-│       └── NodeMetricStrategy.java     # Estrategia de métrica de nodos
+│       ├── DirectoryScanner.java       # Directory scanning contract
+│       └── NodeMetricStrategy.java     # Node metric strategy
 ├── infrastructure/
 │   ├── interaction/
-│   │   └── OpenFileInteractionPolicy.java # Política de apertura de archivos
+│   │   └── OpenFileInteractionPolicy.java # System file opener policy
 │   ├── preferences/
-│   │   └── ThemePreferences.java     # Persistencia de preferencias de tema
+│   │   └── ThemePreferences.java     # Theme preference persistence
 │   └── scanner/
-│       └── DirectoryTreeBuilder.java # Escaneo paralelo con ForkJoinPool
+│       └── DirectoryTreeBuilder.java # Parallel scanning with ForkJoinPool
 ├── tdas/
-│   ├── lists/                        # Implementaciones propias de listas
-│   │   ├── List.java                 # Interfaz base
+│   ├── lists/                        # Custom list implementations
+│   │   ├── List.java                 # Base interface
 │   │   ├── ListConvertors.java
 │   │   ├── al/                       # ArrayList
 │   │   ├── dll/                      # DoublyLinkedList
 │   │   ├── cll/                      # CircularLinkedList
 │   │   └── dcll/                     # DoublyCircularLinkedList
 │   └── trees/
-│       ├── MultiTree.java            # Árbol n-ario genérico
-│       └── MultiTreeNode.java        # Nodo del árbol n-ario
+│       ├── MultiTree.java            # Generic n-ary tree
+│       └── MultiTreeNode.java        # Node for n-ary tree
 ├── utils/
-│   ├── AppUtils.java                 # Utilidades de alertas y diálogos
-│   ├── FileExtensionUtils.java       # Utilidades de extensiones y colores
-│   ├── FileOpener.java               # Apertura de archivos con app del sistema
-│   └── FileUtils.java                # Utilidades de archivos y rutas
+│   ├── AppUtils.java                 # Alerts and dialog helpers
+│   ├── FileExtensionUtils.java       # Extension color and helper utilities
+│   ├── FileOpener.java               # Open files with system apps
+│   └── FileUtils.java                # File and path utilities
 └── view/
-    ├── PresentationNode.java          # Nodo base de presentación
-    ├── PresentationNodeFactory.java   # Factory para nodos de presentación
-    ├── ThemeStyle.java                # Gestión de estilos de tema
-    ├── TreeRender.java                # Motor de renderizado del treemap
+    ├── PresentationNode.java          # Base presentation node
+    ├── PresentationNodeFactory.java   # Factory for presentation nodes
+    ├── ThemeStyle.java                # Theme style management
+    ├── TreeRender.java                # Treemap rendering engine
     └── nodes/
-        ├── DirectoryPresentationNode.java # Nodo para directorios
-        ├── ExtensionPresentationNode.java # Nodo para extensiones
-        └── FilePresentationNode.java      # Nodo para archivos
+        ├── DirectoryPresentationNode.java # Directory presentation node
+        ├── ExtensionPresentationNode.java # Extension presentation node
+        └── FilePresentationNode.java      # File presentation node
 ```
 
-## Diseño de Concurrencia
+## Concurrency Design
 
-El escaneo de directorios utiliza el framework **Fork/Join** de Java para paralelizar el cálculo de tamaños:
+Directory scanning uses Java's **Fork/Join** framework to parallelize size computation:
 
-1. `DirectoryTreeBuilder` crea un `ForkJoinPool` y lanza una `DirectoryScanTask` desde el directorio raíz.
-2. Cada tarea escanea un directorio: procesa archivos secuencialmente y hace _fork_ de subtareas para cada subdirectorio.
-3. Tras el _join_, se ensamblan los subárboles y se acumulan los tamaños.
-4. `AppController` envuelve todo el proceso en un `javafx.concurrent.Task` que se ejecuta en un hilo daemon, manteniendo la UI responsiva con indicador de progreso.
+1. `DirectoryTreeBuilder` creates a `ForkJoinPool` and starts a `DirectoryScanTask` from the root directory.
+2. Each task scans a directory: files are processed sequentially and subtasks are forked for subdirectories.
+3. After joining, subtrees are assembled and sizes accumulated.
+4. `AppController` wraps the entire process in a `javafx.concurrent.Task` that runs on a daemon thread, keeping the UI responsive and providing progress updates.
 
-## Patrones de Diseño
+## Design Patterns
 
-- **MVC** — Separación entre controladores (`controllers/`), modelos (`domain/model/`), lógica (`application/`) y vistas (`view/`).
-- **Strategy** — `NodeMetricStrategy` y `NodeInteractionPolicy` permiten intercambiar comportamientos.
-- **Factory** — `PresentationNodeFactory` encapsula la creación de nodos de presentación.
-- **Pipeline** — `TransformationPipeline` encadena transformaciones con dependencias.
-- **Fork/Join** — Paralelización del escaneo de directorios mediante tareas recursivas.
+- **MVC** — Separation between controllers (`controllers/`), models (`domain/model/`), logic (`application/`) and views (`view/`).
+- **Strategy** — `NodeMetricStrategy` and `NodeInteractionPolicy` allow swapping behaviors.
+- **Factory** — `PresentationNodeFactory` encapsulates creation of presentation nodes.
+- **Pipeline** — `TransformationPipeline` chains transformations with dependencies.
+- **Fork/Join** — Parallelization of directory scanning via recursive tasks.
 
-## Licencia
+## License
 
-Este proyecto es de uso personal y educativo.
+This project is for personal and educational use.
