@@ -16,11 +16,11 @@ Desktop application built with **Java 17** and **JavaFX 21** that visualizes dir
 
 ## Requirements
 
-| Component | Minimum version |
-| --------- | ----------------|
-| Java (JDK) | 17 |
-| Maven | 3.6+ |
-| JavaFX | 21 (managed by Maven) |
+| Component  | Minimum version       |
+| ---------- | --------------------- |
+| Java (JDK) | 17                    |
+| Maven      | 3.6+                  |
+| JavaFX     | 21 (managed by Maven) |
 
 ## Build and Run
 
